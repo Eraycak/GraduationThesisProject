@@ -13,6 +13,22 @@ namespace UMT.ConnectionApproval
         [SerializeField] private InputField passwordInputField;
         [SerializeField] private GameObject passwordEntryUI;
         [SerializeField] private GameObject leaveButton;
+
+        private void Start ()
+        {
+            NetworkManager.Singleton.OnServerStarted += HandleServerStarted;
+            NetworkManager.Singleton.OnClientConnectedCallback += HandleClientConnected;
+            NetworkManager.Singleton.OnClientDisconnectCallback += HandleClientDisconnected;
+        }
+
+        private void OnDestroy()
+        {
+            if(NetworkManager.Singleton != null) { return; }
+
+            NetworkManager.Singleton.OnServerStarted -= HandleServerStarted;
+            NetworkManager.Singleton.OnClientConnectedCallback -= HandleClientConnected;
+            NetworkManager.Singleton.OnClientDisconnectCallback -= HandleClientDisconnected;
+        }
         
         public void Host()
         {
@@ -28,7 +44,10 @@ namespace UMT.ConnectionApproval
 
         public void Leave()
         {
-
+            if (NetworkManager.Singleton.IsHost)
+            {
+                NetworkManager.Singleton.Shutdown();
+            }
         }
 
         private void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
@@ -47,6 +66,32 @@ namespace UMT.ConnectionApproval
             {
                 response.Approved= false;
                 response.Reason = "Wrong Password";
+            }
+        }
+
+        private void HandleServerStarted()
+        {
+            if (NetworkManager.Singleton.IsHost)
+            {
+                HandleClientConnected(NetworkManager.Singleton.LocalClientId);
+            }
+        }
+
+        private void HandleClientConnected(ulong clientId)
+        {
+            if (clientId == NetworkManager.Singleton.LocalClientId)
+            {
+                passwordEntryUI.gameObject.SetActive(false);
+                leaveButton.gameObject.SetActive(true);
+            }
+        }
+
+        private void HandleClientDisconnected(ulong clientId)
+        {
+            if (clientId == NetworkManager.Singleton.LocalClientId)
+            {
+                passwordEntryUI.gameObject.SetActive(true);
+                leaveButton.gameObject.SetActive(false);
             }
         }
     }
