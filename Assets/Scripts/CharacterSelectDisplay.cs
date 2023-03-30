@@ -2,6 +2,9 @@ using UnityEngine;
 using TMPro;
 using Unity.Netcode;
 using System;
+using UnityEngine.UI;
+using System.Collections.Generic;
+using UnityEngine.TextCore.Text;
 
 public class CharacterSelectDisplay : NetworkBehaviour
 {
@@ -12,6 +15,10 @@ public class CharacterSelectDisplay : NetworkBehaviour
     [SerializeField] private CharacterSelectButton characterSelectButtonPrefab;
 
     [SerializeField] private PlayerCard[] playerCards;
+
+    [SerializeField] private Button readyButton;
+
+    private List<CharacterSelectButton> characterSelectButtons = new List<CharacterSelectButton>();
 
     private NetworkList<CharacterSelectState> players;
 
@@ -30,6 +37,7 @@ public class CharacterSelectDisplay : NetworkBehaviour
             {
                 var characterSelectButtonPrefabInstance = Instantiate(characterSelectButtonPrefab, charactersHolder);
                 characterSelectButtonPrefabInstance.SetCharacter(this, character);
+                characterSelectButtons.Add(characterSelectButtonPrefabInstance);
             }
 
             players.OnListChanged += HandlePlayersStateChanged;
@@ -74,17 +82,46 @@ public class CharacterSelectDisplay : NetworkBehaviour
                 playerCards[i].DisableDisplay();
             }
         }
+
+        foreach(var button in characterSelectButtons)
+        {
+            if(button.IsDisabled) { continue; }
+
+            if(IsCharacterTaken(button.Character.Id, false))
+            {
+                button.SetDisabled();
+            }
+        }
+
+        foreach(var player in players)
+        {
+            if(player.ClientId != NetworkManager.Singleton.LocalClientId) { continue; }
+            
+            if (player.IsReady)
+            {
+                readyButton.interactable = false;
+                break;
+            }
+
+            if(IsCharacterTaken(player.CharacterId, false))
+            {
+                readyButton.interactable = false;
+                break;
+            }
+
+            readyButton.interactable = true;
+            break;
+        }
     }
 
     private void HandleClientDisconnected(ulong clientId)
     {
         for (int i = 0; i < players.Count; i++)
         {
-            if (players[i].ClientId == clientId)
-            {
-                players.RemoveAt(i);
-                break;
-            }
+            if (players[i].ClientId != clientId) { continue; }
+
+            players.RemoveAt(i);
+            break;
         }
     }
 
@@ -95,6 +132,17 @@ public class CharacterSelectDisplay : NetworkBehaviour
 
     public void Select(Character character)
     {
+        for (int i = 0; i < players.Count; i++)
+        {
+            if (players[i].ClientId != NetworkManager.Singleton.LocalClientId) { continue; }
+
+            if (players[i].IsReady) { return; }
+
+            if (players[i].CharacterId == character.Id) { return; }
+
+            if(IsCharacterTaken(character.Id,false)) { return; }
+        }
+
         SelectServerRpc(character.Id);
     }
 
@@ -103,10 +151,53 @@ public class CharacterSelectDisplay : NetworkBehaviour
     {
         for(int i = 0;i < players.Count;i++)
         {
-            if (players[i].ClientId==serverRpcParams.Receive.SenderClientId)
-            {
-                players[i]= new CharacterSelectState(players[i].ClientId, characterId);
-            }
+            if (players[i].ClientId != serverRpcParams.Receive.SenderClientId) { continue; }
+
+            if (!characterDatabase.IsValidCharacterId(characterId)) { return; }
+
+            if (IsCharacterTaken(characterId, true)) { return; }
+
+            players[i] = new CharacterSelectState(players[i].ClientId, characterId, players[i].IsReady);
         }
+    }
+
+    public void GetReady()
+    {
+        GetReadyServerRpc();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void GetReadyServerRpc(ServerRpcParams serverRpcParams = default)
+    {
+        for (int i = 0; i < players.Count; i++)
+        {
+            if (players[i].ClientId != serverRpcParams.Receive.SenderClientId) { continue; }
+
+            if (!characterDatabase.IsValidCharacterId(players[i].CharacterId)) { return; }
+
+            if (IsCharacterTaken(players[i].CharacterId, true)) { return; }
+
+            players[i] = new CharacterSelectState(players[i].ClientId, players[i].CharacterId, true);
+        }
+
+        foreach (var player in players)
+        {
+            if (!player.IsReady) { return; }
+        }
+    }
+
+    private bool IsCharacterTaken(int characterId, bool checkAll)
+    {
+        for(int i = 0; i < players.Count; i++)
+        {
+            if (!checkAll)
+            {
+                if (players[i].ClientId == NetworkManager.Singleton.LocalClientId) { continue; }
+            }
+
+            if (players[i].CharacterId == characterId && players[i].IsReady) { return true; }
+        }
+
+        return false;
     }
 }

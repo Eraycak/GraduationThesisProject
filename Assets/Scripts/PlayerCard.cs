@@ -22,7 +22,7 @@ public class PlayerCard : MonoBehaviour
             characterIconImage.enabled = false;
         }
 
-        playerNameText.text = $"Player {state.ClientId}";
+        playerNameText.text = state.IsReady ? $"Player {state.ClientId} (Ready)" : $"Player {state.ClientId} (Not Ready)";
         visuals.SetActive(true);
     }
 

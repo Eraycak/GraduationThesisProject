@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Character Database", menuName = "Characters/Database")]
@@ -11,9 +12,14 @@ public class CharacterDatabase : ScriptableObject
     {
         foreach (var character in characters)
         {
-            if(character.Id == id) return character;
+            if (character.Id == id) { return character; }
         }
 
         return null;
+    }
+
+    public bool IsValidCharacterId(int id)
+    {
+        return characters.Any(c => c.Id == id);
     }
 }
