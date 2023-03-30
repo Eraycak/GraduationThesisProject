@@ -170,6 +170,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 103442361}
+  - component: {fileID: 103442362}
   m_Layer: 0
   m_Name: PlayerCard (4)
   m_TagString: Untagged
@@ -198,6 +199,22 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0.5}
+--- !u!114 &103442362
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 103442360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 814fc63d777908f4d9fc4666275c3d9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  characterDatabase: {fileID: 11400000, guid: fdfa6bf79053e3840b64a9f54a7ac14b, type: 2}
+  visuals: {fileID: 1809958845}
+  characterIconImage: {fileID: 1447240928}
+  playerNameText: {fileID: 1559143477}
 --- !u!1 &168665039
 GameObject:
   m_ObjectHideFlags: 0
@@ -207,6 +224,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 168665040}
+  - component: {fileID: 168665041}
   m_Layer: 0
   m_Name: PlayerCard (2)
   m_TagString: Untagged
@@ -235,6 +253,22 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0.5}
+--- !u!114 &168665041
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 168665039}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 814fc63d777908f4d9fc4666275c3d9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  characterDatabase: {fileID: 11400000, guid: fdfa6bf79053e3840b64a9f54a7ac14b, type: 2}
+  visuals: {fileID: 827743849}
+  characterIconImage: {fileID: 1250580242}
+  playerNameText: {fileID: 456728288}
 --- !u!1 &172672275
 GameObject:
   m_ObjectHideFlags: 0
@@ -467,7 +501,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -100, y: 0}
-  m_SizeDelta: {x: 200, y: -350}
+  m_SizeDelta: {x: 200, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &456728288
 MonoBehaviour:
@@ -653,6 +687,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 612955753}
+  - component: {fileID: 612955754}
   m_Layer: 0
   m_Name: PlayerCard (1)
   m_TagString: Untagged
@@ -681,6 +716,22 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0.5}
+--- !u!114 &612955754
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 612955752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 814fc63d777908f4d9fc4666275c3d9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  characterDatabase: {fileID: 11400000, guid: fdfa6bf79053e3840b64a9f54a7ac14b, type: 2}
+  visuals: {fileID: 1117645331}
+  characterIconImage: {fileID: 1102791005}
+  playerNameText: {fileID: 1494331328}
 --- !u!1 &623038671
 GameObject:
   m_ObjectHideFlags: 0
@@ -690,6 +741,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 623038672}
+  - component: {fileID: 623038673}
   m_Layer: 0
   m_Name: PlayerCard
   m_TagString: Untagged
@@ -718,6 +770,22 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0.5}
+--- !u!114 &623038673
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 623038671}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 814fc63d777908f4d9fc4666275c3d9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  characterDatabase: {fileID: 11400000, guid: fdfa6bf79053e3840b64a9f54a7ac14b, type: 2}
+  visuals: {fileID: 1190806990}
+  characterIconImage: {fileID: 1805318110}
+  playerNameText: {fileID: 1882247450}
 --- !u!1 &801936498
 GameObject:
   m_ObjectHideFlags: 0
@@ -754,7 +822,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -100, y: 0}
-  m_SizeDelta: {x: 200, y: -350}
+  m_SizeDelta: {x: 200, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &801936500
 MonoBehaviour:
@@ -926,8 +994,8 @@ Camera:
   m_GameObject: {fileID: 974682806}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0.26188144, g: 0.3618206, b: 0.5188679, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -1011,7 +1079,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 200, y: -200}
+  m_SizeDelta: {x: 200, y: 0}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &1102791005
 MonoBehaviour:
@@ -1151,6 +1219,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 747d6f439aaea234e9882e20711e3bf3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  characterDatabase: {fileID: 11400000, guid: fdfa6bf79053e3840b64a9f54a7ac14b, type: 2}
+  charactersHolder: {fileID: 1856442178}
+  characterSelectButtonPrefab: {fileID: 514264235101163266, guid: 9fc4bfe5b6259854b94cb7887a90ee37, type: 3}
+  playerCards:
+  - {fileID: 623038673}
+  - {fileID: 612955754}
+  - {fileID: 168665041}
+  - {fileID: 1344110509}
+  - {fileID: 103442362}
 --- !u!1 &1190806990
 GameObject:
   m_ObjectHideFlags: 0
@@ -1225,7 +1302,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 200, y: -200}
+  m_SizeDelta: {x: 200, y: 0}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &1250580242
 MonoBehaviour:
@@ -1274,6 +1351,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1344110508}
+  - component: {fileID: 1344110509}
   m_Layer: 0
   m_Name: PlayerCard (3)
   m_TagString: Untagged
@@ -1302,6 +1380,22 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0.5}
+--- !u!114 &1344110509
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1344110507}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 814fc63d777908f4d9fc4666275c3d9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  characterDatabase: {fileID: 11400000, guid: fdfa6bf79053e3840b64a9f54a7ac14b, type: 2}
+  visuals: {fileID: 90165023}
+  characterIconImage: {fileID: 1617305731}
+  playerNameText: {fileID: 801936500}
 --- !u!1 &1447240926
 GameObject:
   m_ObjectHideFlags: 0
@@ -1338,7 +1432,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 200, y: -200}
+  m_SizeDelta: {x: 200, y: 0}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &1447240928
 MonoBehaviour:
@@ -1414,7 +1508,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -100, y: 0}
-  m_SizeDelta: {x: 200, y: -350}
+  m_SizeDelta: {x: 200, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1494331328
 MonoBehaviour:
@@ -1617,7 +1711,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -100, y: 0}
-  m_SizeDelta: {x: 200, y: -350}
+  m_SizeDelta: {x: 200, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1559143477
 MonoBehaviour:
@@ -1752,7 +1846,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 200, y: -200}
+  m_SizeDelta: {x: 200, y: 0}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &1617305731
 MonoBehaviour:
@@ -1828,7 +1922,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 200, y: -200}
+  m_SizeDelta: {x: 200, y: 0}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &1805318110
 MonoBehaviour:
@@ -1960,7 +2054,7 @@ MonoBehaviour:
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
-  m_ChildAlignment: 0
+  m_ChildAlignment: 4
   m_StartCorner: 0
   m_StartAxis: 0
   m_CellSize: {x: 75, y: 75}
@@ -2003,7 +2097,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -100, y: 0}
-  m_SizeDelta: {x: 200, y: -350}
+  m_SizeDelta: {x: 200, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1882247450
 MonoBehaviour:
