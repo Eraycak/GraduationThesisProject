@@ -184,6 +184,13 @@ public class CharacterSelectDisplay : NetworkBehaviour
         {
             if (!player.IsReady) { return; }
         }
+
+        foreach(var player in players)
+        {
+            ServerManager.Instance.SetCharacter(player.ClientId, player.CharacterId);
+        }
+
+        ServerManager.Instance.StartGame();
     }
 
     private bool IsCharacterTaken(int characterId, bool checkAll)
