@@ -5,17 +5,21 @@ using System;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using UnityEngine.TextCore.Text;
+using System.Collections;
+using Unity.Netcode.Transports.UTP;
+using Unity.Networking.Transport.Relay;
+using Unity.Services.Relay;
+using Unity.Services.Relay.Models;
+using UnityEngine.SceneManagement;
+using UnityEditor.PackageManager;
 
 public class CharacterSelectDisplay : NetworkBehaviour
 {
     [SerializeField] private CharacterDatabase characterDatabase;
-
     [SerializeField] private Transform charactersHolder;
-
     [SerializeField] private CharacterSelectButton characterSelectButtonPrefab;
-
     [SerializeField] private PlayerCard[] playerCards;
-
+    [SerializeField] private TMP_Text joinCodeText;
     [SerializeField] private Button readyButton;
 
     private List<CharacterSelectButton> characterSelectButtons = new List<CharacterSelectButton>();
@@ -52,6 +56,11 @@ public class CharacterSelectDisplay : NetworkBehaviour
             {
                 HandleClientConnected(client.ClientId);
             }
+        }
+
+        if (IsHost)
+        {
+            joinCodeText.text = "Join Code: " + HostManager.Instance.JoinCode;
         }
     }
 
@@ -187,10 +196,10 @@ public class CharacterSelectDisplay : NetworkBehaviour
 
         foreach(var player in players)
         {
-            ServerManager.Instance.SetCharacter(player.ClientId, player.CharacterId);
+            HostManager.Instance.SetCharacter(player.ClientId, player.CharacterId);
         }
 
-        ServerManager.Instance.StartGame();
+        HostManager.Instance.StartGame();
     }
 
     private bool IsCharacterTaken(int characterId, bool checkAll)

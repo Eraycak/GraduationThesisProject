@@ -2,6 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
+using Unity.Netcode.Transports.UTP;
+using Unity.Networking.Transport.Relay;
+using Unity.Services.Relay;
+using Unity.Services.Relay.Models;
+using UnityEngine.SceneManagement;
+using UnityEditor.PackageManager;
 
 public class CharacterSpawner : NetworkBehaviour
 {
@@ -11,7 +17,7 @@ public class CharacterSpawner : NetworkBehaviour
     {
         if (!IsServer) { return; }
 
-        foreach(var client in ServerManager.Instance.ClientData)
+        foreach(var client in HostManager.Instance.ClientData)
         {
             var character = characterDatabase.GetCharacterById(client.Value.characterId);
 
