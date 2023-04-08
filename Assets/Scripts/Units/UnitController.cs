@@ -4,15 +4,25 @@ using UnityEngine;
 
 public class UnitController : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    private Outline outline;
+
+    private void OnMouseEnter()
     {
-        
+        if (outline == null)
+        {
+            outline = gameObject.AddComponent<Outline>();
+            outline.OutlineMode = Outline.Mode.OutlineAll;
+            outline.OutlineColor = Color.red;
+            outline.OutlineWidth = 5f;
+        }
+        else
+        {
+            gameObject.GetComponent<Outline>().enabled = true;
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnMouseExit()
     {
-        
+        gameObject.GetComponent<Outline>().enabled = false;
     }
 }
