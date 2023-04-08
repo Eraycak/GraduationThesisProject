@@ -428,6 +428,7 @@ GameObject:
   - component: {fileID: 8735932539374392535}
   - component: {fileID: 8735932539374392534}
   - component: {fileID: 4313119664741863830}
+  - component: {fileID: 117158640}
   m_Layer: 0
   m_Name: FreeLichPolyart
   m_TagString: Untagged
@@ -444,7 +445,7 @@ Transform:
   m_GameObject: {fileID: 4868396589473980291}
   m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
   m_LocalPosition: {x: -2, y: 0, z: -4}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8373962050649792800}
@@ -509,12 +510,28 @@ CapsuleCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4868396589473980291}
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.89
   m_Height: 2.29
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}
+--- !u!54 &117158640
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4868396589473980291}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 126
+  m_CollisionDetection: 0
 --- !u!1 &4883956037097514487
 GameObject:
   m_ObjectHideFlags: 0
