@@ -11,6 +11,7 @@ public class UnitController : MonoBehaviour
     private Plane plane = new Plane(Vector3.up, 0);
     private bool isCollided = false;
     private GameObject gridGameObject;
+    private GameObject[] grids;
     private bool inCombat = false;
     private bool isMoving = false;
     private float unitMoveSpeed = 1f;
@@ -18,7 +19,29 @@ public class UnitController : MonoBehaviour
 
     private void Start()
     {
-        gridGameObject = GameObject.FindGameObjectWithTag("Grid");
+        grids = GameObject.FindGameObjectsWithTag("Grid");
+        if (gameObject.GetComponent<InfoOfUnit>().GetTeamNumberOfUnit() == 0)
+        {
+            if (grids[0].gameObject.transform.name == "Grid")
+            {
+                gridGameObject = grids[0];
+            }
+            else
+            {
+                gridGameObject = grids[1];
+            }
+        }
+        else
+        {
+            if (grids[0].gameObject.transform.name == "Grid")
+            {
+                gridGameObject = grids[1];
+            }
+            else
+            {
+                gridGameObject = grids[0];
+            }
+        }
     }
 
     void Update()
@@ -44,6 +67,7 @@ public class UnitController : MonoBehaviour
         if (isMoving)
         {
             var step = unitMoveSpeed * Time.deltaTime;
+            //gameObject.GetComponent<Rigidbody>().MovePosition(targetPosition.transform.position);
             gameObject.transform.position = Vector3.MoveTowards(gameObject.transform.position, targetPosition.transform.position, step);
         }
 
@@ -51,7 +75,7 @@ public class UnitController : MonoBehaviour
         {
             Debug.Log("fighting");
             StartCoroutine(WaitForSecondsCoroutine(2));
-            inCombat = false;
+            //inCombat = false;
         }
     }
 

@@ -502,6 +502,7 @@ MonoBehaviour:
     Name: FreeLichPolyart
     UnitGameObject: {fileID: 4868396589473980291}
     Animator: {fileID: 2534054716241965044}
+    teamNumber: 0
 --- !u!136 &4313119664741863830
 CapsuleCollider:
   m_ObjectHideFlags: 0

@@ -713,6 +713,7 @@ MonoBehaviour:
     Name: DogPolyart
     UnitGameObject: {fileID: 8286979398469710923}
     Animator: {fileID: 8286979398462408695}
+    teamNumber: 1
 --- !u!114 &8047462536246447967
 MonoBehaviour:
   m_ObjectHideFlags: 0
