@@ -60,27 +60,40 @@ public class UnitController : MonoBehaviour
 
     private void FindLocation()
     {
-        GameObject nearestGameObject = gridGameObject.transform.GetChild(0).gameObject;
-
-        float distance = Vector3.Distance(nearestGameObject.transform.position, gameObject.transform.position);
-        for (int i = 1; i < gridGameObject.transform.childCount; i++)
+        bool isCursorOnBlock = false;
+        for (int i = 0; i < gridGameObject.transform.childCount; i++)
         {
             GameObject childGameObject = gridGameObject.transform.GetChild(i).gameObject;
-            if (!childGameObject.GetComponent<GridCubeController>().hasUnitOnItself)
+            if (childGameObject.GetComponent<Outline>() != null && childGameObject.GetComponent<Outline>().isActiveAndEnabled)
             {
-                float tmpDistance = Vector3.Distance(childGameObject.transform.position, gameObject.transform.position);
-                if (tmpDistance < distance)
+                gameObject.transform.position = new Vector3(childGameObject.transform.position.x, gameObject.transform.position.y, childGameObject.transform.position.z);
+                gameObject.transform.position = new Vector3(gameObject.transform.position.x, 0, gameObject.transform.position.z);
+                isCursorOnBlock = true;
+                break;
+            }
+        }
+
+        if (!isCursorOnBlock)
+        {
+            GameObject nearestGameObject = gridGameObject.transform.GetChild(0).gameObject;
+            float distance = Vector3.Distance(nearestGameObject.transform.position, gameObject.transform.position);
+            for (int i = 1; i < gridGameObject.transform.childCount; i++)
+            {
+                GameObject childGameObject = gridGameObject.transform.GetChild(i).gameObject;
+                if (!childGameObject.GetComponent<GridCubeController>().hasUnitOnItself)
                 {
-                    distance = tmpDistance;
-                    nearestGameObject = childGameObject;
-                    //Debug.Log(distance + " dist" + " " + nearestGameObject.gameObject.name + " nearesttt");
-                    childGameObject = null;
+                    float tmpDistance = Vector3.Distance(childGameObject.transform.position, gameObject.transform.position);
+                    if (tmpDistance < distance)
+                    {
+                        distance = tmpDistance;
+                        nearestGameObject = childGameObject;
+                        childGameObject = null;
+                    }
                 }
             }
-            
+            gameObject.transform.position = new Vector3(nearestGameObject.transform.position.x, gameObject.transform.position.y, nearestGameObject.transform.position.z);
+            gameObject.transform.position = new Vector3(gameObject.transform.position.x, 0, gameObject.transform.position.z);
         }
-        gameObject.transform.position = new Vector3(nearestGameObject.transform.position.x, gameObject.transform.position.y, nearestGameObject.transform.position.z);
-        gameObject.transform.position = new Vector3(gameObject.transform.position.x, 0, gameObject.transform.position.z);
     }
 
     private void OnMouseUp()
