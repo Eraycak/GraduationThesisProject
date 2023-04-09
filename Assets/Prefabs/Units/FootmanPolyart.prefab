@@ -512,6 +512,7 @@ MonoBehaviour:
     Name: FootmanPolyart
     UnitGameObject: {fileID: 1938597667469860090}
     Animator: {fileID: 1938597667469860085}
+    teamNumber: 1
 --- !u!136 &7874452372582335414
 CapsuleCollider:
   m_ObjectHideFlags: 0

@@ -831,6 +831,7 @@ MonoBehaviour:
     Name: Polyart_Golem
     UnitGameObject: {fileID: 2502180232180086822}
     Animator: {fileID: 2502180232180086823}
+    teamNumber: 1
 --- !u!136 &6264868490071870989
 CapsuleCollider:
   m_ObjectHideFlags: 0

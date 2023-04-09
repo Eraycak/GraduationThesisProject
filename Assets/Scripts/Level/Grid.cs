@@ -4,15 +4,11 @@ using UnityEngine;
 
 public class Grid : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    //private GameObject[] gameObjectsOnGrid = null;
+    public  InfoOfUnit[] gameObjectsOnGrid = null;
 
-    // Update is called once per frame
-    void Update()
+    private void Start()
     {
-        
+        gameObjectsOnGrid = FindObjectsOfType<InfoOfUnit>();
     }
 }

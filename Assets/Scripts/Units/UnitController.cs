@@ -11,6 +11,10 @@ public class UnitController : MonoBehaviour
     private Plane plane = new Plane(Vector3.up, 0);
     private bool isCollided = false;
     private GameObject gridGameObject;
+    private bool inCombat = false;
+    private bool isMoving = false;
+    private float unitMoveSpeed = 1f;
+    private Transform targetPosition;
 
     private void Start()
     {
@@ -24,6 +28,30 @@ public class UnitController : MonoBehaviour
         if (plane.Raycast(ray, out distance))
         {
             worldPosition = ray.GetPoint(distance);
+        }
+
+        if(gridGameObject.GetComponent<Grid>().gameObjectsOnGrid != null && !inCombat)
+        {
+            foreach (var item in gridGameObject.GetComponent<Grid>().gameObjectsOnGrid)
+            {
+                if (item.GetComponent<InfoOfUnit>().GetTeamNumberOfUnit() != gameObject.GetComponent<InfoOfUnit>().GetTeamNumberOfUnit())
+                {
+                    Combat();
+                }
+            }
+        }
+
+        if (isMoving)
+        {
+            var step = unitMoveSpeed * Time.deltaTime;
+            gameObject.transform.position = Vector3.MoveTowards(gameObject.transform.position, targetPosition.transform.position, step);
+        }
+
+        if (inCombat && !isMoving && isCollided)
+        {
+            Debug.Log("fighting");
+            StartCoroutine(WaitForSecondsCoroutine(2));
+            inCombat = false;
         }
     }
 
@@ -54,6 +82,7 @@ public class UnitController : MonoBehaviour
 
     private void OnMouseDrag()
     {
+        inCombat = false;
         gameObject.GetComponent<Collider>().isTrigger = true;
         gameObject.transform.position = new Vector3(worldPosition.x, 0, worldPosition.z);
     }
@@ -111,6 +140,11 @@ public class UnitController : MonoBehaviour
             {
                 isCollided = true;
             }
+            if (collision.gameObject.GetComponent<InfoOfUnit>() != null && collision.gameObject.GetComponent<InfoOfUnit>().GetTeamNumberOfUnit() != gameObject.GetComponent<InfoOfUnit>().GetTeamNumberOfUnit())
+            {
+                isCollided = true;
+                isMoving = false;
+            }
         }
     }
 
@@ -123,5 +157,36 @@ public class UnitController : MonoBehaviour
                 isCollided = false;
             }
         }
+    }
+
+    private void Combat()
+    {
+        inCombat = true;
+        float distance = -1;
+        GameObject nearEnemyGameObject = null;
+        foreach (var item in gridGameObject.GetComponent<Grid>().gameObjectsOnGrid)
+        {
+            if (item.GetComponent<InfoOfUnit>().GetTeamNumberOfUnit() != gameObject.GetComponent<InfoOfUnit>().GetTeamNumberOfUnit())
+            {
+                float tmpDistance = Vector3.Distance(item.transform.position, gameObject.transform.position);
+                if (distance == -1)
+                {
+                    distance = tmpDistance;
+                    nearEnemyGameObject = item.gameObject;
+                }
+                else if (distance > tmpDistance)
+                {
+                    distance = tmpDistance;
+                    nearEnemyGameObject = item.gameObject;
+                }
+            }
+        }
+        MoveToEnemy(nearEnemyGameObject);
+    }
+
+    private void MoveToEnemy(GameObject enemyGameObject)
+    {
+        targetPosition = enemyGameObject.transform;
+        isMoving = true;
     }
 }

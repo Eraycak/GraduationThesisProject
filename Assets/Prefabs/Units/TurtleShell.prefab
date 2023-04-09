@@ -308,6 +308,7 @@ MonoBehaviour:
     Name: TurtleShell
     UnitGameObject: {fileID: 4324649356895532158}
     Animator: {fileID: 4418550458471886874}
+    teamNumber: 0
 --- !u!136 &6312215028117544312
 CapsuleCollider:
   m_ObjectHideFlags: 0
