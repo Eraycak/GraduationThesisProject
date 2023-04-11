@@ -709,11 +709,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5afba503a3032164393d58e19a63dac6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  infoOfUnitStruct:
-    Name: DogPolyart
-    UnitGameObject: {fileID: 8286979398469710923}
-    Animator: {fileID: 8286979398462408695}
-    teamNumber: 1
+  nameOfUnit: DogPolyart
+  unitGameObject: {fileID: 8286979398469710923}
+  animator: {fileID: 8286979398462408695}
+  teamNumber: 1
+  healthValue: 300
+  damageValue: 30
 --- !u!114 &8047462536246447967
 MonoBehaviour:
   m_ObjectHideFlags: 0

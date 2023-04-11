@@ -498,11 +498,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5afba503a3032164393d58e19a63dac6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  infoOfUnitStruct:
-    Name: FreeLichPolyart
-    UnitGameObject: {fileID: 4868396589473980291}
-    Animator: {fileID: 2534054716241965044}
-    teamNumber: 0
+  nameOfUnit: FreeLichPolyart
+  unitGameObject: {fileID: 4868396589473980291}
+  animator: {fileID: 2534054716241965044}
+  teamNumber: 0
+  healthValue: 300
+  damageValue: 50
 --- !u!136 &4313119664741863830
 CapsuleCollider:
   m_ObjectHideFlags: 0

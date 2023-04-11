@@ -827,11 +827,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5afba503a3032164393d58e19a63dac6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  infoOfUnitStruct:
-    Name: Polyart_Golem
-    UnitGameObject: {fileID: 2502180232180086822}
-    Animator: {fileID: 2502180232180086823}
-    teamNumber: 1
+  nameOfUnit: Polyart_Golem
+  unitGameObject: {fileID: 2502180232180086822}
+  animator: {fileID: 2502180232180086823}
+  teamNumber: 1
+  healthValue: 1000
+  damageValue: 5
 --- !u!136 &6264868490071870989
 CapsuleCollider:
   m_ObjectHideFlags: 0

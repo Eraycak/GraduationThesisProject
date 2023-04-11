@@ -1,28 +1,52 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
-public class InfoOfUnit: MonoBehaviour
+public class InfoOfUnit : MonoBehaviour
 {
-    public InfoOfUnitStruct infoOfUnitStruct;
+    [SerializeField] private string nameOfUnit;
+    [SerializeField] private GameObject unitGameObject;
+    [SerializeField] private Animator animator;
+    [SerializeField] private int teamNumber;
+    [SerializeField] private int healthValue;
+    [SerializeField] private int damageValue;
 
-    public void SetTeamNumberOfUnit(int teamNumber)
+    public string Name
     {
-        infoOfUnitStruct.teamNumber = teamNumber;
+        get { return nameOfUnit; }
+        set { nameOfUnit = value; }
     }
-
-    public int GetTeamNumberOfUnit()
+    public GameObject UnitGameObject
     {
-        return infoOfUnitStruct.teamNumber;
+        get { return unitGameObject; }
+        set { unitGameObject = value; }
     }
-}
-
-[Serializable]
-public struct InfoOfUnitStruct
-{
-    [SerializeField] private string Name;
-    [SerializeField] private GameObject UnitGameObject;
-    [SerializeField] private Animator Animator;
-    [SerializeField] public int teamNumber;
+    public Animator Animator
+    {
+        get { return animator; }
+        set { animator = value; }
+    }
+    public int TeamNumber
+    {
+        get { return teamNumber; }
+        set { teamNumber = value; }
+    }
+    public int HealthValue
+    {
+        get { return healthValue; }
+        set { 
+            healthValue = value;
+            if (healthValue <= 0)
+            {
+                Destroy(gameObject);
+            }
+        }
+    }
+    public int DamageValue
+    {
+        get { return damageValue; }
+        set { damageValue = value; }
+    }
 }

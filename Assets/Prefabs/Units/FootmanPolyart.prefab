@@ -508,11 +508,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5afba503a3032164393d58e19a63dac6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  infoOfUnitStruct:
-    Name: FootmanPolyart
-    UnitGameObject: {fileID: 1938597667469860090}
-    Animator: {fileID: 1938597667469860085}
-    teamNumber: 1
+  nameOfUnit: FootmanPolyart
+  unitGameObject: {fileID: 1938597667469860090}
+  animator: {fileID: 1938597667469860085}
+  teamNumber: 1
+  healthValue: 500
+  damageValue: 40
 --- !u!136 &7874452372582335414
 CapsuleCollider:
   m_ObjectHideFlags: 0

@@ -135,11 +135,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5afba503a3032164393d58e19a63dac6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  infoOfUnitStruct:
-    Name: GruntPolyart
-    UnitGameObject: {fileID: 7841088374105108580}
-    Animator: {fileID: 7841088374105108581}
-    teamNumber: 0
+  nameOfUnit: GruntPolyart
+  unitGameObject: {fileID: 7841088374105108580}
+  animator: {fileID: 7841088374105108581}
+  teamNumber: 0
+  healthValue: 800
+  damageValue: 15
 --- !u!114 &1957523958
 MonoBehaviour:
   m_ObjectHideFlags: 0

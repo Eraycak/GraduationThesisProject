@@ -9,18 +9,19 @@ public class UnitController : MonoBehaviour
     private Outline outline;
     private Vector3 worldPosition;
     private Plane plane = new Plane(Vector3.up, 0);
-    private bool isCollided = false;
     private GameObject gridGameObject;
     private GameObject[] grids;
     private bool inCombat = false;
     private bool isMoving = false;
     private float unitMoveSpeed = 1f;
     private Transform targetPosition;
+    private bool isCollidedWithEnemy = false;
+    private bool isRoundWon = false;
 
     private void Start()
     {
         grids = GameObject.FindGameObjectsWithTag("Grid");
-        if (gameObject.GetComponent<InfoOfUnit>().GetTeamNumberOfUnit() == 0)
+        if (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 0)
         {
             if (grids[0].gameObject.transform.name == "Grid")
             {
@@ -46,36 +47,49 @@ public class UnitController : MonoBehaviour
 
     void Update()
     {
-        float distance;
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (plane.Raycast(ray, out distance))
+        if (!isRoundWon)
         {
-            worldPosition = ray.GetPoint(distance);
-        }
-
-        if(gridGameObject.GetComponent<Grid>().gameObjectsOnGrid != null && !inCombat)
-        {
-            foreach (var item in gridGameObject.GetComponent<Grid>().gameObjectsOnGrid)
+            float distance;
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (plane.Raycast(ray, out distance))
             {
-                if (item.GetComponent<InfoOfUnit>().GetTeamNumberOfUnit() != gameObject.GetComponent<InfoOfUnit>().GetTeamNumberOfUnit())
+                worldPosition = ray.GetPoint(distance);
+            }
+
+            if (gridGameObject.GetComponent<Grid>().gameObjectsOnGrid != null && !inCombat)
+            {
+                int enemyNumber = 0;
+                foreach (var item in gridGameObject.GetComponent<Grid>().gameObjectsOnGrid)
                 {
-                    Combat();
+                    enemyNumber = 0;
+                    if (item != null)
+                    {
+                        if (item.GetComponent<InfoOfUnit>().TeamNumber != gameObject.GetComponent<InfoOfUnit>().TeamNumber)
+                        {
+                            enemyNumber++;
+                            Combat();
+                        }
+                    }
+                }
+                if (enemyNumber == 0)
+                {
+                    isRoundWon = true;
+                    Debug.Log("Won");
                 }
             }
-        }
 
-        if (isMoving)
-        {
-            var step = unitMoveSpeed * Time.deltaTime;
-            //gameObject.GetComponent<Rigidbody>().MovePosition(targetPosition.transform.position);
-            gameObject.transform.position = Vector3.MoveTowards(gameObject.transform.position, targetPosition.transform.position, step);
-        }
-
-        if (inCombat && !isMoving && isCollided)
-        {
-            Debug.Log("fighting");
-            StartCoroutine(WaitForSecondsCoroutine(2));
-            //inCombat = false;
+            if (isMoving)
+            {
+                var step = unitMoveSpeed * Time.deltaTime;
+                if (targetPosition != null)
+                {
+                    gameObject.transform.position = Vector3.MoveTowards(gameObject.transform.position, targetPosition.transform.position, step);
+                }
+                else
+                {
+                    isMoving = false;
+                }
+            }
         }
     }
 
@@ -107,6 +121,8 @@ public class UnitController : MonoBehaviour
     private void OnMouseDrag()
     {
         inCombat = false;
+        targetPosition = null;
+        isMoving = false;
         gameObject.GetComponent<Collider>().isTrigger = true;
         gameObject.transform.position = new Vector3(worldPosition.x, 0, worldPosition.z);
     }
@@ -158,27 +174,25 @@ public class UnitController : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if(collision.gameObject.name != "Plane")
+        if (collision.gameObject.GetComponent<InfoOfUnit>() != null)
         {
-            if (collision.gameObject.transform.parent != null && collision.gameObject.transform.parent.name != "Grid")
+            if (collision.gameObject.GetComponent<InfoOfUnit>().TeamNumber != gameObject.GetComponent<InfoOfUnit>().TeamNumber)
             {
-                isCollided = true;
-            }
-            if (collision.gameObject.GetComponent<InfoOfUnit>() != null && collision.gameObject.GetComponent<InfoOfUnit>().GetTeamNumberOfUnit() != gameObject.GetComponent<InfoOfUnit>().GetTeamNumberOfUnit())
-            {
-                isCollided = true;
+                isCollidedWithEnemy = true;
                 isMoving = false;
+                StartCoroutine(DamageEnemyUnit(collision.gameObject));
             }
         }
     }
 
     private void OnCollisionExit(Collision collision)
     {
-        if (collision.gameObject.name != "Plane")
+        if (collision.gameObject.GetComponent<InfoOfUnit>() != null)
         {
-            if (collision.gameObject.transform.parent != null && collision.gameObject.transform.parent.name != "Grid")
+            if (collision.gameObject.GetComponent<InfoOfUnit>().TeamNumber != gameObject.GetComponent<InfoOfUnit>().TeamNumber)
             {
-                isCollided = false;
+                isCollidedWithEnemy = false;
+                inCombat = false;
             }
         }
     }
@@ -190,27 +204,50 @@ public class UnitController : MonoBehaviour
         GameObject nearEnemyGameObject = null;
         foreach (var item in gridGameObject.GetComponent<Grid>().gameObjectsOnGrid)
         {
-            if (item.GetComponent<InfoOfUnit>().GetTeamNumberOfUnit() != gameObject.GetComponent<InfoOfUnit>().GetTeamNumberOfUnit())
+            if (item != null)
             {
-                float tmpDistance = Vector3.Distance(item.transform.position, gameObject.transform.position);
-                if (distance == -1)
+                if (item.GetComponent<InfoOfUnit>().TeamNumber != gameObject.GetComponent<InfoOfUnit>().TeamNumber)
                 {
-                    distance = tmpDistance;
-                    nearEnemyGameObject = item.gameObject;
-                }
-                else if (distance > tmpDistance)
-                {
-                    distance = tmpDistance;
-                    nearEnemyGameObject = item.gameObject;
+                    float tmpDistance = Vector3.Distance(item.transform.position, gameObject.transform.position);
+                    if (distance == -1)
+                    {
+                        distance = tmpDistance;
+                        nearEnemyGameObject = item.gameObject;
+                    }
+                    else if (distance > tmpDistance)
+                    {
+                        distance = tmpDistance;
+                        nearEnemyGameObject = item.gameObject;
+                    }
                 }
             }
         }
-        MoveToEnemy(nearEnemyGameObject);
+        if (nearEnemyGameObject != null)
+        {
+            MoveToEnemy(nearEnemyGameObject);
+        }
     }
 
     private void MoveToEnemy(GameObject enemyGameObject)
     {
         targetPosition = enemyGameObject.transform;
         isMoving = true;
+    }
+
+    private IEnumerator DamageEnemyUnit(GameObject enemyGameObject)
+    {
+        while (isCollidedWithEnemy)
+        {
+            if (enemyGameObject == null)
+            {
+                isCollidedWithEnemy = false;
+                inCombat = false;
+            }
+            else
+            {
+                enemyGameObject.GetComponent<InfoOfUnit>().HealthValue -= gameObject.GetComponent<InfoOfUnit>().DamageValue;
+            }
+            yield return new WaitForSeconds(2f);
+        }
     }
 }
