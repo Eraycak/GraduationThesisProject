@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Principal;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -49,19 +50,19 @@ public class UnitController : MonoBehaviour
 
     void Update()
     {
-        if (!isRoundWon)
+        if (!isRoundWon)//checks if round is won by one of the players
         {
             float distance;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (plane.Raycast(ray, out distance))
             {
-                worldPosition = ray.GetPoint(distance);
+                worldPosition = ray.GetPoint(distance);//get mouse position on the grid for using it later to drag units
             }
 
             if (gridGameObject.GetComponent<Grid>().gameObjectsOnGrid != null && !inCombat)
             {
                 int enemyNumber = 0;
-                foreach (var item in gridGameObject.GetComponent<Grid>().gameObjectsOnGrid)
+                foreach (var item in gridGameObject.GetComponent<Grid>().gameObjectsOnGrid)//checks enemy number count on the grid
                 {
                     if (item != null)
                     {
@@ -72,7 +73,7 @@ public class UnitController : MonoBehaviour
                         }
                     }
                 }
-                if (enemyNumber == 0)
+                if (enemyNumber == 0)//if there is no enemy unit, the player won the round
                 {
                     isRoundWon = true;
                     Debug.Log("Won");
@@ -84,20 +85,20 @@ public class UnitController : MonoBehaviour
                 var step = unitMoveSpeed * Time.deltaTime;
                 if (targetPosition != null)
                 {
-                    gameObject.transform.position = Vector3.MoveTowards(gameObject.transform.position, targetPosition.transform.position, step);
+                    gameObject.transform.position = Vector3.MoveTowards(gameObject.transform.position, targetPosition.transform.position, step);//moves unit to enemy units position step by step
                     Vector3 direction = targetPosition.transform.position - gameObject.transform.position;
-                    if (direction.magnitude > 0.01f)
+                    if (direction.magnitude > 0.01f)//turns unit towards to the enemy unit
                     {
                         transform.LookAt(gameObject.transform.position + direction);
                     }
-                    if (!isWalkingAnimPlaying)
+                    if (!isWalkingAnimPlaying)//plays walking anim of unit
                     {
                         isWalkingAnimPlaying = true;
                         ChangeToMoveAnimation();
                     }
                 }
                 else
-                {
+                {//if there is no target position, stops walking and walking animation
                     isMoving = false;
                     isWalkingAnimPlaying = false;
                 }
@@ -110,40 +111,55 @@ public class UnitController : MonoBehaviour
         yield return new WaitForSeconds(time);
     }
 
-    private void OnMouseEnter()
+    private void OnMouseEnter()//enables outline on unit if mouse enters that unit
     {
-        if (outline == null)
+        //prevents players to access enemy units
+        if (((Camera.current.name.Contains("First") || Camera.current.name.Contains("Main")) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 0)) ||
+            ((Camera.current.name.Contains("Second") /*|| Camera.current.name.Contains("Main")*/) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 1)))
         {
-            outline = gameObject.AddComponent<Outline>();
-            outline.OutlineMode = Outline.Mode.OutlineAll;
-            outline.OutlineColor = Color.red;
-            outline.OutlineWidth = 5f;
-        }
-        else
-        {
-            gameObject.GetComponent<Outline>().enabled = true;
+            if (outline == null)//adds outline component to object if it does not have that
+            {
+                outline = gameObject.AddComponent<Outline>();
+                outline.OutlineMode = Outline.Mode.OutlineAll;
+                outline.OutlineColor = Color.red;
+                outline.OutlineWidth = 5f;
+            }
+            else
+            {
+                gameObject.GetComponent<Outline>().enabled = true;
+            }
         }
     }
 
-    private void OnMouseExit()
+    private void OnMouseExit()//disables outline on unit if mouse exits that unit
     {
-        gameObject.GetComponent<Outline>().enabled = false;
+        //prevents players to access enemy units
+        if (((Camera.current.name.Contains("First") || Camera.current.name.Contains("Main")) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 0)) ||
+            ((Camera.current.name.Contains("Second") /*|| Camera.current.name.Contains("Main")*/) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 1)))
+        {
+            gameObject.GetComponent<Outline>().enabled = false;
+        }
     }
 
-    private void OnMouseDrag()
+    private void OnMouseDrag()//Drags selected unit to cursor position
     {
-        inCombat = false;
-        targetPosition = null;
-        isMoving = false;
-        isWalkingAnimPlaying = false;
-        gameObject.GetComponent<Collider>().isTrigger = true;
-        gameObject.transform.position = new Vector3(worldPosition.x, 0, worldPosition.z);
+        //prevents players to access enemy units
+        if (((Camera.current.name.Contains("First") || Camera.current.name.Contains("Main")) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 0)) ||
+            ((Camera.current.name.Contains("Second") /*|| Camera.current.name.Contains("Main")*/) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 1)))
+        {
+            inCombat = false;
+            targetPosition = null;
+            isMoving = false;
+            isWalkingAnimPlaying = false;
+            gameObject.GetComponent<Collider>().isTrigger = true;
+            gameObject.transform.position = new Vector3(worldPosition.x, 0, worldPosition.z);
+        }
     }
 
     private void FindLocation()
     {
         bool isCursorOnBlock = false;
-        for (int i = 0; i < gridGameObject.transform.childCount; i++)
+        for (int i = 0; i < gridGameObject.transform.childCount; i++)//checks every grid object to find last activated grid to snap unit on it
         {
             GameObject childGameObject = gridGameObject.transform.GetChild(i).gameObject;
             if (childGameObject.GetComponent<Outline>() != null && childGameObject.GetComponent<Outline>().isActiveAndEnabled)
@@ -155,14 +171,14 @@ public class UnitController : MonoBehaviour
             }
         }
 
-        if (!isCursorOnBlock)
+        if (!isCursorOnBlock)//if cursor was not on any block then chooses the block which is nearest to the unit
         {
             GameObject nearestGameObject = gridGameObject.transform.GetChild(0).gameObject;
             float distance = Vector3.Distance(nearestGameObject.transform.position, gameObject.transform.position);
             for (int i = 1; i < gridGameObject.transform.childCount; i++)
             {
                 GameObject childGameObject = gridGameObject.transform.GetChild(i).gameObject;
-                if (!childGameObject.GetComponent<GridCubeController>().hasUnitOnItself)
+                if (!childGameObject.GetComponent<GridCubeController>().hasUnitOnItself)//if block has unit on itself, it will be passed
                 {
                     float tmpDistance = Vector3.Distance(childGameObject.transform.position, gameObject.transform.position);
                     if (tmpDistance < distance)
@@ -178,18 +194,23 @@ public class UnitController : MonoBehaviour
         }
     }
 
-    private void OnMouseUp()
+    private void OnMouseUp()//if dragged unit is released finds nearest block to set position of unit
     {
-        FindLocation();
-        StartCoroutine(WaitForSecondsCoroutine(1f));
-        gameObject.GetComponent<Collider>().isTrigger = false;
+        //prevents players to access enemy units
+        if (((Camera.current.name.Contains("First") || Camera.current.name.Contains("Main")) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 0)) ||
+            ((Camera.current.name.Contains("Second") /*|| Camera.current.name.Contains("Main")*/) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 1)))
+        {
+            FindLocation();
+            StartCoroutine(WaitForSecondsCoroutine(1f));
+            gameObject.GetComponent<Collider>().isTrigger = false;
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.GetComponent<InfoOfUnit>() != null)
         {
-            if (collision.gameObject.GetComponent<InfoOfUnit>().TeamNumber != gameObject.GetComponent<InfoOfUnit>().TeamNumber)
+            if (collision.gameObject.GetComponent<InfoOfUnit>().TeamNumber != gameObject.GetComponent<InfoOfUnit>().TeamNumber)//checks collision with enemy is started
             {
                 isCollidedWithEnemy = true;
                 isMoving = false;
@@ -198,7 +219,7 @@ public class UnitController : MonoBehaviour
             }
             else
             {
-                AvoidFriendUnits(collision.gameObject);
+                AvoidFriendUnits(collision.gameObject);//if friendly objects collided, aparts them
             }
         }
     }
@@ -207,7 +228,7 @@ public class UnitController : MonoBehaviour
     {
         if (collision.gameObject.GetComponent<InfoOfUnit>() != null)
         {
-            if (collision.gameObject.GetComponent<InfoOfUnit>().TeamNumber != gameObject.GetComponent<InfoOfUnit>().TeamNumber)
+            if (collision.gameObject.GetComponent<InfoOfUnit>().TeamNumber != gameObject.GetComponent<InfoOfUnit>().TeamNumber)//checks collision with enemy is finished
             {
                 isCollidedWithEnemy = false;
                 inCombat = false;
@@ -221,7 +242,7 @@ public class UnitController : MonoBehaviour
         inCombat = true;
         float distance = -1;
         GameObject nearEnemyGameObject = null;
-        foreach (var item in gridGameObject.GetComponent<Grid>().gameObjectsOnGrid)
+        foreach (var item in gridGameObject.GetComponent<Grid>().gameObjectsOnGrid)//checks every units in the grid to find nearest enemy
         {
             if (item != null)
             {
@@ -233,7 +254,7 @@ public class UnitController : MonoBehaviour
                         distance = tmpDistance;
                         nearEnemyGameObject = item.gameObject;
                     }
-                    else if (distance > tmpDistance)
+                    else if (distance > tmpDistance)//sets minimum distanced units as nearEnemyGameObject
                     {
                         distance = tmpDistance;
                         nearEnemyGameObject = item.gameObject;
@@ -247,7 +268,7 @@ public class UnitController : MonoBehaviour
         }
     }
 
-    private void MoveToEnemy(GameObject enemyGameObject)
+    private void MoveToEnemy(GameObject enemyGameObject)//sets enemy position as target position
     {
         targetPosition = enemyGameObject.transform;
         isMoving = true;
@@ -255,8 +276,10 @@ public class UnitController : MonoBehaviour
 
     private IEnumerator DamageEnemyUnit(GameObject enemyGameObject)
     {
+        //damages enemy every two seconds while being collided
         while (isCollidedWithEnemy)
         {
+            //checks enemy is died to stop attacking
             if (enemyGameObject == null)
             {
                 isCollidedWithEnemy = false;
@@ -265,8 +288,8 @@ public class UnitController : MonoBehaviour
             }
             else
             {
-                enemyGameObject.GetComponent<InfoOfUnit>().HealthValue -= gameObject.GetComponent<InfoOfUnit>().DamageValue;
-                if (!isAttackingAnimPlaying)
+                enemyGameObject.GetComponent<InfoOfUnit>().HealthValue -= gameObject.GetComponent<InfoOfUnit>().DamageValue;//reduces enemy unit health
+                if (!isAttackingAnimPlaying)//sets attacking anim
                 {
                     isAttackingAnimPlaying = true;
                     ChangeToAttackAnimation();
@@ -278,25 +301,20 @@ public class UnitController : MonoBehaviour
 
     private void ChangeToMoveAnimation()
     {
+        //Changes units animation to walking
         gameObject.GetComponent<InfoOfUnit>().Animator.SetTrigger("Walking");
     }
 
     private void ChangeToAttackAnimation()
     {
+        //Changes units animation to attacking
         gameObject.GetComponent<InfoOfUnit>().Animator.SetTrigger("Attacking");
     }
 
     private void AvoidFriendUnits(GameObject friendGameObject)
     {
-        /*float avoidanceDistance = 5f;
-        float avoidanceStrength = 1f;
-        float maxSteeringAngle = 45f;
-        // Calculate avoidance steering
+        // Calculate avoidance distance
         Vector3 avoidanceDirection = transform.position - friendGameObject.transform.position;
-        Debug.Log("avodis: " + avoidanceDirection);
-        Vector3 avoidanceSteering = Vector3.RotateTowards(transform.forward, avoidanceDirection.normalized, maxSteeringAngle * Mathf.Deg2Rad, 0f);
-        Debug.Log("avoiding");
-        // Apply avoidance steering
-        transform.rotation = Quaternion.LookRotation(avoidanceSteering);*/
+        gameObject.transform.position += avoidanceDirection / 8;//calculated distance is to big therefore it is divided
     }
 }

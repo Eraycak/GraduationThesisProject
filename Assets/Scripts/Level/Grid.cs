@@ -8,6 +8,6 @@ public class Grid : MonoBehaviour
 
     private void Start()
     {
-        gameObjectsOnGrid = FindObjectsOfType<InfoOfUnit>();
+        gameObjectsOnGrid = FindObjectsOfType<InfoOfUnit>();//gets all gameObjects with InfoOfUnit script to store all units for further use
     }
 }
