@@ -85,6 +85,11 @@ public class UnitController : MonoBehaviour
                 if (targetPosition != null)
                 {
                     gameObject.transform.position = Vector3.MoveTowards(gameObject.transform.position, targetPosition.transform.position, step);
+                    Vector3 direction = targetPosition.transform.position - gameObject.transform.position;
+                    if (direction.magnitude > 0.01f)
+                    {
+                        transform.LookAt(gameObject.transform.position + direction);
+                    }
                     if (!isWalkingAnimPlaying)
                     {
                         isWalkingAnimPlaying = true;
@@ -191,6 +196,10 @@ public class UnitController : MonoBehaviour
                 isWalkingAnimPlaying = false;
                 StartCoroutine(DamageEnemyUnit(collision.gameObject));
             }
+            else
+            {
+                AvoidFriendUnits(collision.gameObject);
+            }
         }
     }
 
@@ -271,8 +280,23 @@ public class UnitController : MonoBehaviour
     {
         gameObject.GetComponent<InfoOfUnit>().Animator.SetTrigger("Walking");
     }
+
     private void ChangeToAttackAnimation()
     {
         gameObject.GetComponent<InfoOfUnit>().Animator.SetTrigger("Attacking");
+    }
+
+    private void AvoidFriendUnits(GameObject friendGameObject)
+    {
+        /*float avoidanceDistance = 5f;
+        float avoidanceStrength = 1f;
+        float maxSteeringAngle = 45f;
+        // Calculate avoidance steering
+        Vector3 avoidanceDirection = transform.position - friendGameObject.transform.position;
+        Debug.Log("avodis: " + avoidanceDirection);
+        Vector3 avoidanceSteering = Vector3.RotateTowards(transform.forward, avoidanceDirection.normalized, maxSteeringAngle * Mathf.Deg2Rad, 0f);
+        Debug.Log("avoiding");
+        // Apply avoidance steering
+        transform.rotation = Quaternion.LookRotation(avoidanceSteering);*/
     }
 }
