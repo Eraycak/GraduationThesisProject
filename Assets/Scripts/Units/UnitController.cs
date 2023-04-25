@@ -17,6 +17,8 @@ public class UnitController : MonoBehaviour
     private Transform targetPosition;
     private bool isCollidedWithEnemy = false;
     private bool isRoundWon = false;
+    private bool isWalkingAnimPlaying = false;
+    private bool isAttackingAnimPlaying = false;
 
     private void Start()
     {
@@ -61,7 +63,6 @@ public class UnitController : MonoBehaviour
                 int enemyNumber = 0;
                 foreach (var item in gridGameObject.GetComponent<Grid>().gameObjectsOnGrid)
                 {
-                    enemyNumber = 0;
                     if (item != null)
                     {
                         if (item.GetComponent<InfoOfUnit>().TeamNumber != gameObject.GetComponent<InfoOfUnit>().TeamNumber)
@@ -84,10 +85,16 @@ public class UnitController : MonoBehaviour
                 if (targetPosition != null)
                 {
                     gameObject.transform.position = Vector3.MoveTowards(gameObject.transform.position, targetPosition.transform.position, step);
+                    if (!isWalkingAnimPlaying)
+                    {
+                        isWalkingAnimPlaying = true;
+                        ChangeToMoveAnimation();
+                    }
                 }
                 else
                 {
                     isMoving = false;
+                    isWalkingAnimPlaying = false;
                 }
             }
         }
@@ -123,6 +130,7 @@ public class UnitController : MonoBehaviour
         inCombat = false;
         targetPosition = null;
         isMoving = false;
+        isWalkingAnimPlaying = false;
         gameObject.GetComponent<Collider>().isTrigger = true;
         gameObject.transform.position = new Vector3(worldPosition.x, 0, worldPosition.z);
     }
@@ -180,6 +188,7 @@ public class UnitController : MonoBehaviour
             {
                 isCollidedWithEnemy = true;
                 isMoving = false;
+                isWalkingAnimPlaying = false;
                 StartCoroutine(DamageEnemyUnit(collision.gameObject));
             }
         }
@@ -193,6 +202,7 @@ public class UnitController : MonoBehaviour
             {
                 isCollidedWithEnemy = false;
                 inCombat = false;
+                isAttackingAnimPlaying = false;
             }
         }
     }
@@ -242,12 +252,27 @@ public class UnitController : MonoBehaviour
             {
                 isCollidedWithEnemy = false;
                 inCombat = false;
+                isAttackingAnimPlaying = false;
             }
             else
             {
                 enemyGameObject.GetComponent<InfoOfUnit>().HealthValue -= gameObject.GetComponent<InfoOfUnit>().DamageValue;
+                if (!isAttackingAnimPlaying)
+                {
+                    isAttackingAnimPlaying = true;
+                    ChangeToAttackAnimation();
+                }
             }
             yield return new WaitForSeconds(2f);
         }
+    }
+
+    private void ChangeToMoveAnimation()
+    {
+        gameObject.GetComponent<InfoOfUnit>().Animator.SetTrigger("Walking");
+    }
+    private void ChangeToAttackAnimation()
+    {
+        gameObject.GetComponent<InfoOfUnit>().Animator.SetTrigger("Attacking");
     }
 }

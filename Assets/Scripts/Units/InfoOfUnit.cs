@@ -40,7 +40,7 @@ public class InfoOfUnit : MonoBehaviour
             healthValue = value;
             if (healthValue <= 0)
             {
-                Destroy(gameObject);
+                StartCoroutine(DieAnimationCoroutine());
             }
         }
     }
@@ -48,5 +48,12 @@ public class InfoOfUnit : MonoBehaviour
     {
         get { return damageValue; }
         set { damageValue = value; }
+    }
+
+    private IEnumerator DieAnimationCoroutine()
+    {
+        Animator.SetTrigger("Died");
+        yield return new WaitForSeconds(2f);
+        Destroy(gameObject);
     }
 }
