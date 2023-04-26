@@ -12,6 +12,7 @@ public class InfoOfUnit : MonoBehaviour
     [SerializeField] private int teamNumber;
     [SerializeField] private int healthValue;
     [SerializeField] private int damageValue;
+    private Transform unitsTransform = null;
 
     public string Name
     {
@@ -50,10 +51,16 @@ public class InfoOfUnit : MonoBehaviour
         set { damageValue = value; }
     }
 
+    public Transform UnitsTransform
+    {
+        get { return unitsTransform; }
+        set { unitsTransform = value; }
+    }
+
     private IEnumerator DieAnimationCoroutine()
     {
         Animator.SetTrigger("Died");
         yield return new WaitForSeconds(2f);
-        Destroy(gameObject);
+        gameObject.SetActive(false);
     }
 }

@@ -20,6 +20,8 @@ public class UnitController : MonoBehaviour
     private bool isRoundWon = false;
     private bool isWalkingAnimPlaying = false;
     private bool isAttackingAnimPlaying = false;
+    private GameStateManager gameStateManager = null;
+    public bool isNewRoundStarted = true;
 
     private void Start()
     {
@@ -46,17 +48,37 @@ public class UnitController : MonoBehaviour
                 gridGameObject = grids[0];
             }
         }
+        gameStateManager = FindFirstObjectByType<GameStateManager>();
     }
 
     void Update()
     {
-        if (!isRoundWon)//checks if round is won by one of the players
+        float distance;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (plane.Raycast(ray, out distance))
         {
-            float distance;
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (plane.Raycast(ray, out distance))
+            worldPosition = ray.GetPoint(distance);//get mouse position on the grid for using it later to drag units
+        }
+
+        if (!isRoundWon && gameStateManager.isRoundStarted)//checks if round is won by one of the players
+        {
+            if (isNewRoundStarted)//if new round is started resets unit
             {
-                worldPosition = ray.GetPoint(distance);//get mouse position on the grid for using it later to drag units
+                isRoundWon = false;
+                inCombat = false;
+                isMoving = false;
+                isCollidedWithEnemy = false;
+                isWalkingAnimPlaying = false;
+                isAttackingAnimPlaying = false;
+                if (gameObject.GetComponent<InfoOfUnit>().UnitsTransform == null)
+                {
+                    gameObject.GetComponent<InfoOfUnit>().UnitsTransform = gameObject.transform;
+                }
+                gameObject.transform.position = gameObject.GetComponent<InfoOfUnit>().UnitsTransform.position;
+                gameObject.transform.rotation = gameObject.GetComponent<InfoOfUnit>().UnitsTransform.rotation;
+                gameObject.transform.localScale = gameObject.GetComponent<InfoOfUnit>().UnitsTransform.localScale;
+                isNewRoundStarted = false;
+                Debug.Log("pos: " + gameObject.transform.position + " savedpos: " + gameObject.GetComponent<InfoOfUnit>().UnitsTransform.position);
             }
 
             if (gridGameObject.GetComponent<Grid>().gameObjectsOnGrid != null && !inCombat)
@@ -64,7 +86,7 @@ public class UnitController : MonoBehaviour
                 int enemyNumber = 0;
                 foreach (var item in gridGameObject.GetComponent<Grid>().gameObjectsOnGrid)//checks enemy number count on the grid
                 {
-                    if (item != null)
+                    if (item != null && item.gameObject.activeInHierarchy)
                     {
                         if (item.GetComponent<InfoOfUnit>().TeamNumber != gameObject.GetComponent<InfoOfUnit>().TeamNumber)
                         {
@@ -76,7 +98,6 @@ public class UnitController : MonoBehaviour
                 if (enemyNumber == 0)//if there is no enemy unit, the player won the round
                 {
                     isRoundWon = true;
-                    Debug.Log("Won");
                 }
             }
 
@@ -104,6 +125,17 @@ public class UnitController : MonoBehaviour
                 }
             }
         }
+        else if (isRoundWon)//if round is won resets unit
+        {
+            gameStateManager.isRoundStarted = false;
+            isRoundWon = false;
+            inCombat = false;
+            isMoving = false;
+            isCollidedWithEnemy = false;
+            isWalkingAnimPlaying = false;
+            isAttackingAnimPlaying = false;
+            isNewRoundStarted = true;
+        }
     }
 
     IEnumerator WaitForSecondsCoroutine(float time)
@@ -113,46 +145,56 @@ public class UnitController : MonoBehaviour
 
     private void OnMouseEnter()//enables outline on unit if mouse enters that unit
     {
-        //prevents players to access enemy units
-        if (((Camera.current.name.Contains("First") || Camera.current.name.Contains("Main")) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 0)) ||
-            ((Camera.current.name.Contains("Second") /*|| Camera.current.name.Contains("Main")*/) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 1)))
+        if (!gameStateManager.isRoundStarted)
         {
-            if (outline == null)//adds outline component to object if it does not have that
+            //prevents players to access enemy units
+            if (((Camera.current.name.Contains("First") || Camera.current.name.Contains("Main")) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 0)) ||
+                ((Camera.current.name.Contains("Second") /*|| Camera.current.name.Contains("Main")*/) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 1)))
             {
-                outline = gameObject.AddComponent<Outline>();
-                outline.OutlineMode = Outline.Mode.OutlineAll;
-                outline.OutlineColor = Color.red;
-                outline.OutlineWidth = 5f;
-            }
-            else
-            {
-                gameObject.GetComponent<Outline>().enabled = true;
+                if (outline == null)//adds outline component to object if it does not have that
+                {
+                    outline = gameObject.AddComponent<Outline>();
+                    outline.OutlineMode = Outline.Mode.OutlineAll;
+                    outline.OutlineColor = Color.red;
+                    outline.OutlineWidth = 5f;
+                }
+                else
+                {
+                    gameObject.GetComponent<Outline>().enabled = true;
+                }
             }
         }
     }
 
     private void OnMouseExit()//disables outline on unit if mouse exits that unit
     {
-        //prevents players to access enemy units
-        if (((Camera.current.name.Contains("First") || Camera.current.name.Contains("Main")) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 0)) ||
-            ((Camera.current.name.Contains("Second") /*|| Camera.current.name.Contains("Main")*/) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 1)))
+        if (!gameStateManager.isRoundStarted)
         {
-            gameObject.GetComponent<Outline>().enabled = false;
+            //prevents players to access enemy units
+            if (((Camera.current.name.Contains("First") || Camera.current.name.Contains("Main")) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 0)) ||
+                ((Camera.current.name.Contains("Second") /*|| Camera.current.name.Contains("Main")*/) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 1)))
+            {
+                gameObject.GetComponent<Outline>().enabled = false;
+            }
         }
     }
 
     private void OnMouseDrag()//Drags selected unit to cursor position
     {
-        //prevents players to access enemy units
-        if (((Camera.current.name.Contains("First") || Camera.current.name.Contains("Main")) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 0)) ||
-            ((Camera.current.name.Contains("Second") /*|| Camera.current.name.Contains("Main")*/) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 1)))
+        if (!gameStateManager.isRoundStarted)
         {
-            inCombat = false;
-            targetPosition = null;
-            isMoving = false;
-            isWalkingAnimPlaying = false;
-            gameObject.GetComponent<Collider>().isTrigger = true;
-            gameObject.transform.position = new Vector3(worldPosition.x, 0, worldPosition.z);
+            //prevents players to access enemy units
+            if (((Camera.current.name.Contains("First") || Camera.current.name.Contains("Main")) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 0)) ||
+                ((Camera.current.name.Contains("Second") /*|| Camera.current.name.Contains("Main")*/) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 1)))
+            {
+                inCombat = false;
+                targetPosition = null;
+                isMoving = false;
+                isWalkingAnimPlaying = false;
+                gameObject.GetComponent<Collider>().isTrigger = true;
+                gameObject.transform.position = new Vector3(worldPosition.x, 0, worldPosition.z);
+                gameObject.GetComponent<InfoOfUnit>().UnitsTransform = gameObject.transform;
+            }
         }
     }
 
@@ -196,13 +238,16 @@ public class UnitController : MonoBehaviour
 
     private void OnMouseUp()//if dragged unit is released finds nearest block to set position of unit
     {
-        //prevents players to access enemy units
-        if (((Camera.current.name.Contains("First") || Camera.current.name.Contains("Main")) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 0)) ||
-            ((Camera.current.name.Contains("Second") /*|| Camera.current.name.Contains("Main")*/) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 1)))
+        if (!gameStateManager.isRoundStarted)
         {
-            FindLocation();
-            StartCoroutine(WaitForSecondsCoroutine(1f));
-            gameObject.GetComponent<Collider>().isTrigger = false;
+            //prevents players to access enemy units
+            if (((Camera.current.name.Contains("First") || Camera.current.name.Contains("Main")) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 0)) ||
+                ((Camera.current.name.Contains("Second") /*|| Camera.current.name.Contains("Main")*/) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 1)))
+            {
+                FindLocation();
+                StartCoroutine(WaitForSecondsCoroutine(1f));
+                gameObject.GetComponent<Collider>().isTrigger = false;
+            }
         }
     }
 
@@ -244,7 +289,7 @@ public class UnitController : MonoBehaviour
         GameObject nearEnemyGameObject = null;
         foreach (var item in gridGameObject.GetComponent<Grid>().gameObjectsOnGrid)//checks every units in the grid to find nearest enemy
         {
-            if (item != null)
+            if (item != null && item.gameObject.activeInHierarchy)
             {
                 if (item.GetComponent<InfoOfUnit>().TeamNumber != gameObject.GetComponent<InfoOfUnit>().TeamNumber)
                 {
@@ -280,7 +325,7 @@ public class UnitController : MonoBehaviour
         while (isCollidedWithEnemy)
         {
             //checks enemy is died to stop attacking
-            if (enemyGameObject == null)
+            if (enemyGameObject == null || !enemyGameObject.activeInHierarchy)
             {
                 isCollidedWithEnemy = false;
                 inCombat = false;
@@ -313,8 +358,11 @@ public class UnitController : MonoBehaviour
 
     private void AvoidFriendUnits(GameObject friendGameObject)
     {
-        // Calculate avoidance distance
-        Vector3 avoidanceDirection = transform.position - friendGameObject.transform.position;
-        gameObject.transform.position += avoidanceDirection / 8;//calculated distance is to big therefore it is divided
+        if (!isCollidedWithEnemy)//if unit is collided with enemy, it will not be affected
+        {
+            // Calculate avoidance distance
+            Vector3 avoidanceDirection = transform.position - friendGameObject.transform.position;
+            gameObject.transform.position += avoidanceDirection / 2;//calculated distance is to big therefore it is divided
+        }
     }
 }
