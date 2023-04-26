@@ -12,7 +12,8 @@ public class InfoOfUnit : MonoBehaviour
     [SerializeField] private int teamNumber;
     [SerializeField] private int healthValue;
     [SerializeField] private int damageValue;
-    private Transform unitsTransform = null;
+    private Vector3 unitsPosition = Vector3.zero;
+    private Quaternion unitsRotation = Quaternion.identity;
 
     public string Name
     {
@@ -51,10 +52,16 @@ public class InfoOfUnit : MonoBehaviour
         set { damageValue = value; }
     }
 
-    public Transform UnitsTransform
+    public Vector3 UnitsPosition
     {
-        get { return unitsTransform; }
-        set { unitsTransform = value; }
+        get { return unitsPosition; }
+        set { unitsPosition = value; }
+    }
+
+    public Quaternion UnitsRotation
+    {
+        get { return unitsRotation; }
+        set { unitsRotation = value; }
     }
 
     private IEnumerator DieAnimationCoroutine()

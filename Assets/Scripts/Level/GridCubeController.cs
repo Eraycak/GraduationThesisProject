@@ -7,7 +7,7 @@ public class GridCubeController : MonoBehaviour
     [SerializeField] public bool hasUnitOnItself = false;
     private Outline outline;
 
-    private void OnMouseEnter()
+    private void OnMouseEnter()//outlines block if mouse is on itself
     {
         if (outline == null)
         {
@@ -22,12 +22,12 @@ public class GridCubeController : MonoBehaviour
         }
     }
 
-    private void OnMouseExit()
+    private void OnMouseExit()//disables outline if mouse leaves the block
     {
         gameObject.GetComponent<Outline>().enabled = false;
     }
 
-    private void OnCollisionStay(Collision collision)
+    private void OnCollisionStay(Collision collision)//if block has collision, it has unit on itself
     {
         hasUnitOnItself = true;
     }
