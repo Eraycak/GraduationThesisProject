@@ -16,4 +16,4 @@ MonoBehaviour:
   displayName: Character_2
   icon: {fileID: 21300000, guid: 897c3a3f5c4038345a7143573bbb4a40, type: 3}
   gamePlayPrefabNetworkObject: {fileID: 5655198451398287774, guid: 109955cb79715004e9056019e2fc0e37, type: 3}
-  spawnPoint: {x: 10, y: 10, z: 0}
+  spawnPoint: {x: 15, y: 13, z: 0}

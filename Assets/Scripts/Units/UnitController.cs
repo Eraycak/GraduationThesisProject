@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Security.Principal;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 public class UnitController : MonoBehaviour
@@ -12,6 +13,8 @@ public class UnitController : MonoBehaviour
     private Plane plane = new Plane(Vector3.up, 0);
     private GameObject gridGameObject;
     private GameObject[] grids;
+    private GameObject[] benchs;
+    private GameObject benchGameObject;
     private bool inCombat = false;
     private bool isMoving = false;
     private float unitMoveSpeed = 1f;
@@ -49,6 +52,29 @@ public class UnitController : MonoBehaviour
             }
         }
         gameStateManager = FindFirstObjectByType<GameStateManager>();
+        benchs = GameObject.FindGameObjectsWithTag("Bench");
+        if (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 0)
+        {
+            if (benchs[0].gameObject.transform.name == "Bench")
+            {
+                benchGameObject = benchs[0];
+            }
+            else
+            {
+                benchGameObject = benchs[1];
+            }
+        }
+        else
+        {
+            if (benchs[0].gameObject.transform.name == "Bench")
+            {
+                benchGameObject = benchs[1];
+            }
+            else
+            {
+                benchGameObject = benchs[0];
+            }
+        }
     }
 
     void Update()
@@ -308,15 +334,28 @@ public class UnitController : MonoBehaviour
     private void FindLocation()
     {
         bool isCursorOnBlock = false;
-        for (int i = 0; i < gridGameObject.transform.childCount; i++)//checks every grid object to find last activated grid to snap unit on it
+        var benchComponent = benchGameObject.GetComponent<Bench>();
+        if (benchComponent.isUnitOnBench)
         {
-            GameObject childGameObject = gridGameObject.transform.GetChild(i).gameObject;
-            if (childGameObject.GetComponent<Outline>() != null && childGameObject.GetComponent<Outline>().isActiveAndEnabled)
+            benchComponent.isUnitOnBench = false;
+            isCursorOnBlock = true;
+            var assignedLocation = benchComponent.LocationOfEmptyBench();
+            gameObject.transform.position = new Vector3(assignedLocation.x, gameObject.transform.position.y, assignedLocation.z);
+            gameObject.transform.position = new Vector3(gameObject.transform.position.x, 0, gameObject.transform.position.z);
+            benchComponent.isUnitOnBench = false;
+        }
+        else
+        {
+            for (int i = 0; i < gridGameObject.transform.childCount; i++)//checks every grid object to find last activated grid to snap unit on it
             {
-                gameObject.transform.position = new Vector3(childGameObject.transform.position.x, gameObject.transform.position.y, childGameObject.transform.position.z);
-                gameObject.transform.position = new Vector3(gameObject.transform.position.x, 0, gameObject.transform.position.z);
-                isCursorOnBlock = true;
-                break;
+                GameObject childGameObject = gridGameObject.transform.GetChild(i).gameObject;
+                if (childGameObject.GetComponent<Outline>() != null && childGameObject.GetComponent<Outline>().isActiveAndEnabled)
+                {
+                    gameObject.transform.position = new Vector3(childGameObject.transform.position.x, gameObject.transform.position.y, childGameObject.transform.position.z);
+                    gameObject.transform.position = new Vector3(gameObject.transform.position.x, 0, gameObject.transform.position.z);
+                    isCursorOnBlock = true;
+                    break;
+                }
             }
         }
 
