@@ -1,32 +1,28 @@
-using Unity.Netcode;
-using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Netcode.Transports.UTP;
-using Unity.Networking.Transport.Relay;
-using Unity.Services.Relay;
-using Unity.Services.Relay.Models;
-using UnityEngine.SceneManagement;
-using UnityEditor.PackageManager;
+using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Character", menuName = "Characters/Character")]
-public class Character : ScriptableObject
+public class CamCharacter : MonoBehaviour
 {
     [SerializeField] private int id = -1;
     [SerializeField] private string displayName = "New Display Name";
     [SerializeField] private Sprite icon;
-    [SerializeField] private NetworkObject gamePlayPrefabNetworkObject;
     [SerializeField] private Vector3 spawnPoint;
     [SerializeField] private int currencyValue = 50;
+    private bool wonTheLevel = false;
 
-    public int Id=>id;
+    public int Id => id;
     public string DisplayName => displayName;
     public Sprite Icon => icon;
-    public NetworkObject GamePlayPrefabNetworkObject => gamePlayPrefabNetworkObject;
     public Vector3 SpawnPoint => spawnPoint;
     public int CurrencyValue
     {
         get => currencyValue;
         set => currencyValue = value;
+    }
+    public bool WonTheLevel
+    {
+        get => wonTheLevel;
+        set => wonTheLevel = value;
     }
 }

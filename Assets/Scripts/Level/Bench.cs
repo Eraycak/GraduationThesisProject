@@ -7,7 +7,7 @@ public class Bench : MonoBehaviour
 {
     private int numBenchSlots;
     private int emptyBenchSlots;
-    private bool benchsAreFull = false;
+    internal bool benchsAreFull = false;
     private Outline outline;
     private Vector3 emptyBenchSlotPosition = Vector3.zero;
     internal bool isUnitOnBench = false;
@@ -117,6 +117,24 @@ public class Bench : MonoBehaviour
 
     public Vector3 LocationOfEmptyBench()
     {
+        return emptyBenchSlotPosition;
+    }
+
+    public Vector3 LocationForBoughtUnit()
+    {
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            Transform child = transform.GetChild(i);
+            BenchSlot slot = child.GetComponent<BenchSlot>();
+            bool hasUnitOnItself = slot.hasUnitOnItself;
+            if (hasUnitOnItself == false)
+            {
+                isUnitOnBench = true;
+                slot.hasUnitOnItself = true;
+                emptyBenchSlotPosition = child.transform.position;
+                break;
+            }
+        }
         return emptyBenchSlotPosition;
     }
 }

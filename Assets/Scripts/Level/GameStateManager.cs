@@ -15,6 +15,9 @@ public class GameStateManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI shoppingTimerUIText;
     private GameObject[] grids;
     private bool isUnitsReturnedToPosition = false;
+    [SerializeField] private Button shopButton;
+    private int roundCounter = 0;
+    private int maxRoundNumber = 8;
 
     private void Start()
     {
@@ -26,6 +29,11 @@ public class GameStateManager : MonoBehaviour
         {
             if(shoppingTimer >= 0 && !isRoundStarted)//checks timer is not finished and round is not started
             {
+                if (!shopButton.gameObject.activeInHierarchy)
+                {
+                    shopButton.gameObject.SetActive(true);
+                }
+
                 for (int i = 0; i < grids.Length; i++)//there is two grid on the map that is why this check both of them
                 {
                     foreach (var item in grids[i].gameObject.GetComponent<Grid>().gameObjectsOnGrid)
@@ -72,7 +80,31 @@ public class GameStateManager : MonoBehaviour
                 }
                 shoppingTimer = 30;
                 isRoundStarted = true;
+                if (roundCounter != maxRoundNumber)
+                {
+                    roundCounter++;
+                    CamCharacter[] camCharacters = GameObject.FindObjectsOfType<CamCharacter>();
+                    foreach (CamCharacter item in camCharacters)
+                    {
+                        if (item.WonTheLevel)
+                        {
+                            item.CurrencyValue += 10;
+                        }
+                        else
+                        {
+                            item.CurrencyValue += 5;
+                        }
+                    }
+                }
+                else
+                {
+                    Debug.Log("game is finished");
+                }
                 isUnitsReturnedToPosition = false;
+                if (shopButton.gameObject.activeInHierarchy)
+                {
+                    shopButton.gameObject.SetActive(false);
+                }
             }
         }
         else

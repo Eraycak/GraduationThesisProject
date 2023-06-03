@@ -26,6 +26,7 @@ public class UnitController : MonoBehaviour
     private GameStateManager gameStateManager = null;
     public bool isNewRoundStarted = true;
     public bool isOnTheBench = false;
+    private Camera _camera = null;
 
     private void Start()
     {
@@ -81,10 +82,23 @@ public class UnitController : MonoBehaviour
     void Update()
     {
         float distance;
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (plane.Raycast(ray, out distance))
+        if (Camera.current != null)
         {
-            worldPosition = ray.GetPoint(distance);//get mouse position on the grid for using it later to drag units
+            _camera = Camera.current;
+        }
+
+        if (Camera.allCamerasCount == 1)
+        {
+            _camera = Camera.main;
+        }
+        //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Input.mousePosition != null)
+        {
+            Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
+            if (plane.Raycast(ray, out distance))
+            {
+                worldPosition = ray.GetPoint(distance);//get mouse position on the grid for using it later to drag units
+            }
         }
 
         if (!isOnTheBench)
@@ -126,6 +140,8 @@ public class UnitController : MonoBehaviour
                     if (enemyNumber == 0)//if there is no enemy unit, the player won the round
                     {
                         isRoundWon = true;
+                        _camera.GetComponent<CamCharacter>().WonTheLevel = true;
+                        Debug.Log(_camera);
                     }
                 }
 
@@ -179,7 +195,7 @@ public class UnitController : MonoBehaviour
             if (Camera.allCamerasCount > 1)
             {
                 //prevents players to access enemy units
-                if ((Camera.current.name.Contains("First")) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 0))
+                if ((_camera.name.Contains("First")) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 0))
                 {
                     if (outline == null)//adds outline component to object if it does not have that
                     {
@@ -193,7 +209,7 @@ public class UnitController : MonoBehaviour
                         gameObject.GetComponent<Outline>().enabled = true;
                     }
                 }
-                else if ((Camera.current.name.Contains("Second")) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 1))
+                else if ((_camera.name.Contains("Second")) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 1))
                 {
                     if (outline == null)//adds outline component to object if it does not have that
                     {
@@ -235,11 +251,11 @@ public class UnitController : MonoBehaviour
             if (Camera.allCamerasCount > 1)
             {
                 //prevents players to access enemy units
-                if ((Camera.current.name.Contains("First")) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 0))
+                if ((_camera.name.Contains("First")) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 0))
                 {
                     gameObject.GetComponent<Outline>().enabled = false;
                 }
-                else if ((Camera.current.name.Contains("Second")) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 1))
+                else if ((_camera.name.Contains("Second")) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 1))
                 {
                     gameObject.GetComponent<Outline>().enabled = false;
                 }
@@ -262,7 +278,7 @@ public class UnitController : MonoBehaviour
             if (Camera.allCamerasCount > 1)
             {
                 //prevents players to access enemy units
-                if ((Camera.current.name.Contains("First")) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 0))
+                if ((_camera.name.Contains("First")) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 0))
                 {
                     inCombat = false;
                     targetPosition = null;
@@ -271,7 +287,7 @@ public class UnitController : MonoBehaviour
                     gameObject.GetComponent<Collider>().isTrigger = true;
                     gameObject.transform.position = new Vector3(worldPosition.x, 0, worldPosition.z);
                 }
-                else if ((Camera.current.name.Contains("Second")) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 1))
+                else if ((_camera.name.Contains("Second")) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 1))
                 {
                     inCombat = false;
                     targetPosition = null;
@@ -304,7 +320,7 @@ public class UnitController : MonoBehaviour
             //prevents players to access enemy units
             if (Camera.allCamerasCount > 1)
             {
-                if ((Camera.current.name.Contains("First")) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 0))
+                if ((_camera.name.Contains("First")) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 0))
                 {
                     FindLocation();
                     StartCoroutine(WaitForSecondsCoroutine(1f));
@@ -312,7 +328,7 @@ public class UnitController : MonoBehaviour
                     gameObject.GetComponent<InfoOfUnit>().UnitsPosition = gameObject.transform.position;//saves units position and rotation before round starts. And returns it to there after round finishes.
                     gameObject.GetComponent<InfoOfUnit>().UnitsRotation = gameObject.transform.rotation;
                 }
-                else if ((Camera.current.name.Contains("Second")) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 1))
+                else if ((_camera.name.Contains("Second")) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 1))
                 {
                     FindLocation();
                     StartCoroutine(WaitForSecondsCoroutine(1f));
