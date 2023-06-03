@@ -5,12 +5,18 @@ using UnityEngine.EventSystems;
 
 public class Bench : MonoBehaviour
 {
-    public int numBenchSlots = 8;
-    public int emptyBenchSlots = 8;
-    public bool benchsAreFull = false;
+    private int numBenchSlots;
+    private int emptyBenchSlots;
+    private bool benchsAreFull = false;
     private Outline outline;
     private Vector3 emptyBenchSlotPosition = Vector3.zero;
-    public bool isUnitOnBench = false;
+    internal bool isUnitOnBench = false;
+
+    private void Start()
+    {
+        numBenchSlots = transform.childCount;
+        emptyBenchSlots = numBenchSlots;
+    }
 
     private void OnMouseEnter()//outlines block if mouse is on itself
     {
@@ -34,42 +40,78 @@ public class Bench : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        for (int i = 0; i < transform.childCount; i++)
+        CheckEmptyBenchSlots();
+        if (!benchsAreFull)
         {
-            Transform child = transform.GetChild(i);
-            bool hasUnitOnItself = child.gameObject.GetComponent<BenchSlot>().hasUnitOnItself;
-            if (hasUnitOnItself == false)
+            for (int i = 0; i < transform.childCount; i++)
             {
-                isUnitOnBench = true;
-                child.GetComponent<BenchSlot>().hasUnitOnItself = true;
-                emptyBenchSlotPosition = child.transform.position;
-                break;
-            }
-            else
-            {
-                if (emptyBenchSlots > 0)
+                Transform child = transform.GetChild(i);
+                BenchSlot slot = child.GetComponent<BenchSlot>();
+                bool hasUnitOnItself = slot.hasUnitOnItself;
+                if (hasUnitOnItself == false)
                 {
-                    emptyBenchSlots--;
+                    isUnitOnBench = true;
+                    slot.hasUnitOnItself = true;
+                    emptyBenchSlotPosition = child.transform.position;
+                    break;
+                }
+                else
+                {
+                    if (slot.unitOnMe != null)
+                    {
+                        if (slot.unitOnMe.name == other.name)
+                        {
+                            isUnitOnBench = true;
+                            child.GetComponent<BenchSlot>().hasUnitOnItself = true;
+                            emptyBenchSlotPosition = child.transform.position;
+                            break;
+                        }
+                    }
                 }
             }
         }
-        if (emptyBenchSlots == 0)
+        else
         {
-            benchsAreFull = true;
+            Debug.Log("Benchs Are Full");
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
+        CheckEmptyBenchSlots();
         isUnitOnBench = false;
     }
 
-    public void UnitIsRemovedFromBenchSlot()
+    private void OnCollisionEnter(Collision collision)
     {
-        benchsAreFull = false;
-        if (emptyBenchSlots < 8)
+        CheckEmptyBenchSlots();
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        CheckEmptyBenchSlots();
+    }
+
+    private void CheckEmptyBenchSlots()
+    {
+        emptyBenchSlots = numBenchSlots;
+        for (int i = 0; i < transform.childCount; i++)
         {
-            emptyBenchSlots++;
+            Transform child = transform.GetChild(i);
+            BenchSlot slot = child.GetComponent<BenchSlot>();
+            if (slot.hasUnitOnItself)
+            {
+                emptyBenchSlots--;
+            }
+        }
+
+        if (emptyBenchSlots == 0)
+        {
+            benchsAreFull = true;
+        }
+        else
+        {
+            benchsAreFull = false;
         }
     }
 

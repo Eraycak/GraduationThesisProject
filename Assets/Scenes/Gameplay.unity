@@ -234,6 +234,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hasUnitOnItself: 0
+  unitOnMe: {fileID: 0}
 --- !u!1 &96215848
 GameObject:
   m_ObjectHideFlags: 0
@@ -345,6 +346,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hasUnitOnItself: 0
+  unitOnMe: {fileID: 0}
 --- !u!1 &97978749
 GameObject:
   m_ObjectHideFlags: 0
@@ -567,6 +569,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hasUnitOnItself: 0
+  unitOnMe: {fileID: 0}
 --- !u!1 &123736620
 GameObject:
   m_ObjectHideFlags: 0
@@ -2059,6 +2062,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hasUnitOnItself: 0
+  unitOnMe: {fileID: 0}
 --- !u!1 &376151029
 GameObject:
   m_ObjectHideFlags: 0
@@ -2170,6 +2174,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hasUnitOnItself: 0
+  unitOnMe: {fileID: 0}
 --- !u!1 &405569171
 GameObject:
   m_ObjectHideFlags: 0
@@ -2486,6 +2491,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hasUnitOnItself: 0
+  unitOnMe: {fileID: 0}
 --- !u!1 &540598997
 GameObject:
   m_ObjectHideFlags: 0
@@ -2786,6 +2792,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hasUnitOnItself: 0
+  unitOnMe: {fileID: 0}
 --- !u!1 &613232539
 GameObject:
   m_ObjectHideFlags: 0
@@ -3307,6 +3314,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hasUnitOnItself: 0
+  unitOnMe: {fileID: 0}
 --- !u!1 &719866560
 GameObject:
   m_ObjectHideFlags: 0
@@ -4084,6 +4092,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hasUnitOnItself: 0
+  unitOnMe: {fileID: 0}
 --- !u!1 &884615750
 GameObject:
   m_ObjectHideFlags: 0
@@ -5061,7 +5070,7 @@ Transform:
   - {fileID: 123014901}
   - {fileID: 602585183}
   m_Father: {fileID: 0}
-  m_RootOrder: 15
+  m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1125642073
 MonoBehaviour:
@@ -5075,10 +5084,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5636fe0a45a31024f8ed350263ab3f41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numBenchSlots: 8
-  emptyBenchSlots: 8
-  benchsAreFull: 0
-  isUnitOnBench: 0
 --- !u!65 &1125642074
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6202,6 +6207,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hasUnitOnItself: 0
+  unitOnMe: {fileID: 0}
 --- !u!1 &1383225763
 GameObject:
   m_ObjectHideFlags: 0
@@ -6352,7 +6358,7 @@ Transform:
   - {fileID: 96215849}
   - {fileID: 376151030}
   m_Father: {fileID: 0}
-  m_RootOrder: 16
+  m_RootOrder: 15
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1404661572
 MonoBehaviour:
@@ -6366,10 +6372,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5636fe0a45a31024f8ed350263ab3f41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numBenchSlots: 8
-  emptyBenchSlots: 8
-  benchsAreFull: 0
-  isUnitOnBench: 0
 --- !u!65 &1404661573
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6716,6 +6718,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hasUnitOnItself: 0
+  unitOnMe: {fileID: 0}
 --- !u!1 &1483015714
 GameObject:
   m_ObjectHideFlags: 0
@@ -6827,6 +6830,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hasUnitOnItself: 0
+  unitOnMe: {fileID: 0}
 --- !u!1 &1494172640
 GameObject:
   m_ObjectHideFlags: 0
@@ -7049,6 +7053,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hasUnitOnItself: 0
+  unitOnMe: {fileID: 0}
 --- !u!1 &1577507043
 GameObject:
   m_ObjectHideFlags: 0
@@ -7604,6 +7609,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hasUnitOnItself: 0
+  unitOnMe: {fileID: 0}
 --- !u!1 &1717996555
 GameObject:
   m_ObjectHideFlags: 0
@@ -8704,6 +8710,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hasUnitOnItself: 0
+  unitOnMe: {fileID: 0}
 --- !u!1 &1921542390
 GameObject:
   m_ObjectHideFlags: 0
@@ -9885,6 +9892,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hasUnitOnItself: 0
+  unitOnMe: {fileID: 0}
 --- !u!1 &2134750318
 GameObject:
   m_ObjectHideFlags: 0

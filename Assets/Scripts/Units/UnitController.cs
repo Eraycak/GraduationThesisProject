@@ -25,6 +25,7 @@ public class UnitController : MonoBehaviour
     private bool isAttackingAnimPlaying = false;
     private GameStateManager gameStateManager = null;
     public bool isNewRoundStarted = true;
+    public bool isOnTheBench = false;
 
     private void Start()
     {
@@ -86,80 +87,83 @@ public class UnitController : MonoBehaviour
             worldPosition = ray.GetPoint(distance);//get mouse position on the grid for using it later to drag units
         }
 
-        if (!isRoundWon && gameStateManager.isRoundStarted)//checks if round is won by one of the players
+        if (!isOnTheBench)
         {
-            if (isNewRoundStarted)//if new round is started resets unit
+            if (!isRoundWon && gameStateManager.isRoundStarted)//checks if round is won by one of the players
             {
+                if (isNewRoundStarted)//if new round is started resets unit
+                {
+                    isRoundWon = false;
+                    inCombat = false;
+                    isMoving = false;
+                    isCollidedWithEnemy = false;
+                    isWalkingAnimPlaying = false;
+                    isAttackingAnimPlaying = false;
+                    if (gameObject.GetComponent<InfoOfUnit>().UnitsPosition == Vector3.zero)
+                    {
+                        gameObject.GetComponent<InfoOfUnit>().UnitsPosition = gameObject.transform.position;//saves units position and rotation before round starts. And returns it to there after round finishes.
+                        gameObject.GetComponent<InfoOfUnit>().UnitsRotation = gameObject.transform.rotation;
+                    }
+                    gameObject.transform.position = gameObject.GetComponent<InfoOfUnit>().UnitsPosition;//returns unit to started position and rotation at every round.
+                    gameObject.transform.rotation = gameObject.GetComponent<InfoOfUnit>().UnitsRotation;
+                    isNewRoundStarted = false;
+                }
+
+                if (gridGameObject.GetComponent<Grid>().gameObjectsOnGrid != null && !inCombat)
+                {
+                    int enemyNumber = 0;
+                    foreach (var item in gridGameObject.GetComponent<Grid>().gameObjectsOnGrid)//checks enemy number count on the grid
+                    {
+                        if (item != null && item.gameObject.activeInHierarchy)
+                        {
+                            if (item.GetComponent<InfoOfUnit>().TeamNumber != gameObject.GetComponent<InfoOfUnit>().TeamNumber)
+                            {
+                                enemyNumber++;
+                                Combat();
+                            }
+                        }
+                    }
+                    if (enemyNumber == 0)//if there is no enemy unit, the player won the round
+                    {
+                        isRoundWon = true;
+                    }
+                }
+
+                if (isMoving)
+                {
+                    var step = unitMoveSpeed * Time.deltaTime;
+                    if (targetPosition != null)
+                    {
+                        gameObject.transform.position = Vector3.MoveTowards(gameObject.transform.position, targetPosition.transform.position, step);//moves unit to enemy units position step by step
+                        Vector3 direction = targetPosition.transform.position - gameObject.transform.position;
+                        if (direction.magnitude > 0.01f)//turns unit towards to the enemy unit
+                        {
+                            transform.LookAt(gameObject.transform.position + direction);
+                        }
+                        if (!isWalkingAnimPlaying)//plays walking anim of unit
+                        {
+                            isWalkingAnimPlaying = true;
+                            ChangeToMoveAnimation();
+                        }
+                    }
+                    else
+                    {//if there is no target position, stops walking and walking animation
+                        isMoving = false;
+                        isWalkingAnimPlaying = false;
+                    }
+                }
+            }
+            else if (isRoundWon)//if round is won resets unit
+            {
+                gameStateManager.isRoundStarted = false;
                 isRoundWon = false;
                 inCombat = false;
                 isMoving = false;
                 isCollidedWithEnemy = false;
                 isWalkingAnimPlaying = false;
                 isAttackingAnimPlaying = false;
-                if (gameObject.GetComponent<InfoOfUnit>().UnitsPosition == Vector3.zero)
-                {
-                    gameObject.GetComponent<InfoOfUnit>().UnitsPosition = gameObject.transform.position;//saves units position and rotation before round starts. And returns it to there after round finishes.
-                    gameObject.GetComponent<InfoOfUnit>().UnitsRotation = gameObject.transform.rotation;
-                }
-                gameObject.transform.position = gameObject.GetComponent<InfoOfUnit>().UnitsPosition;//returns unit to started position and rotation at every round.
-                gameObject.transform.rotation = gameObject.GetComponent<InfoOfUnit>().UnitsRotation;
-                isNewRoundStarted = false;
+                isNewRoundStarted = true;
             }
-
-            if (gridGameObject.GetComponent<Grid>().gameObjectsOnGrid != null && !inCombat)
-            {
-                int enemyNumber = 0;
-                foreach (var item in gridGameObject.GetComponent<Grid>().gameObjectsOnGrid)//checks enemy number count on the grid
-                {
-                    if (item != null && item.gameObject.activeInHierarchy)
-                    {
-                        if (item.GetComponent<InfoOfUnit>().TeamNumber != gameObject.GetComponent<InfoOfUnit>().TeamNumber)
-                        {
-                            enemyNumber++;
-                            Combat();
-                        }
-                    }
-                }
-                if (enemyNumber == 0)//if there is no enemy unit, the player won the round
-                {
-                    isRoundWon = true;
-                }
-            }
-
-            if (isMoving)
-            {
-                var step = unitMoveSpeed * Time.deltaTime;
-                if (targetPosition != null)
-                {
-                    gameObject.transform.position = Vector3.MoveTowards(gameObject.transform.position, targetPosition.transform.position, step);//moves unit to enemy units position step by step
-                    Vector3 direction = targetPosition.transform.position - gameObject.transform.position;
-                    if (direction.magnitude > 0.01f)//turns unit towards to the enemy unit
-                    {
-                        transform.LookAt(gameObject.transform.position + direction);
-                    }
-                    if (!isWalkingAnimPlaying)//plays walking anim of unit
-                    {
-                        isWalkingAnimPlaying = true;
-                        ChangeToMoveAnimation();
-                    }
-                }
-                else
-                {//if there is no target position, stops walking and walking animation
-                    isMoving = false;
-                    isWalkingAnimPlaying = false;
-                }
-            }
-        }
-        else if (isRoundWon)//if round is won resets unit
-        {
-            gameStateManager.isRoundStarted = false;
-            isRoundWon = false;
-            inCombat = false;
-            isMoving = false;
-            isCollidedWithEnemy = false;
-            isWalkingAnimPlaying = false;
-            isAttackingAnimPlaying = false;
-            isNewRoundStarted = true;
         }
     }
 
@@ -343,6 +347,14 @@ public class UnitController : MonoBehaviour
             gameObject.transform.position = new Vector3(assignedLocation.x, gameObject.transform.position.y, assignedLocation.z);
             gameObject.transform.position = new Vector3(gameObject.transform.position.x, 0, gameObject.transform.position.z);
             benchComponent.isUnitOnBench = false;
+            isOnTheBench = true;
+            foreach (var item in grids)
+            {
+                if (item.GetComponent<Grid>() != null && item.GetComponent<Grid>().isActiveAndEnabled)
+                {
+                    item.GetComponent<Grid>().UpdateGameObjectOnTheGrid();
+                }
+            }
         }
         else
         {
@@ -354,6 +366,14 @@ public class UnitController : MonoBehaviour
                     gameObject.transform.position = new Vector3(childGameObject.transform.position.x, gameObject.transform.position.y, childGameObject.transform.position.z);
                     gameObject.transform.position = new Vector3(gameObject.transform.position.x, 0, gameObject.transform.position.z);
                     isCursorOnBlock = true;
+                    isOnTheBench = false;
+                    foreach (var item in grids)
+                    {
+                        if (item.GetComponent<Grid>() != null && item.GetComponent<Grid>().isActiveAndEnabled)
+                        {
+                            item.GetComponent<Grid>().UpdateGameObjectOnTheGrid();
+                        }
+                    }
                     break;
                 }
             }
@@ -373,12 +393,19 @@ public class UnitController : MonoBehaviour
                     {
                         distance = tmpDistance;
                         nearestGameObject = childGameObject;
-                        childGameObject = null;
                     }
                 }
             }
             gameObject.transform.position = new Vector3(nearestGameObject.transform.position.x, gameObject.transform.position.y, nearestGameObject.transform.position.z);
             gameObject.transform.position = new Vector3(gameObject.transform.position.x, 0, gameObject.transform.position.z);
+            isOnTheBench = false;
+            foreach (var item in grids)
+            {
+                if (item.GetComponent<Grid>() != null && item.GetComponent<Grid>().isActiveAndEnabled)
+                {
+                    item.GetComponent<Grid>().UpdateGameObjectOnTheGrid();
+                }
+            }
         }
     }
 

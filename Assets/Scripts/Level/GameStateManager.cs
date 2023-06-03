@@ -30,22 +30,25 @@ public class GameStateManager : MonoBehaviour
                 {
                     foreach (var item in grids[i].gameObject.GetComponent<Grid>().gameObjectsOnGrid)
                     {
-                        if (!item.gameObject.activeInHierarchy)//if units are not active(dead), activates them and sets their position and rotation from their saved informations
+                        if(item != null)
                         {
-                            item.gameObject.SetActive(true);
-                            item.gameObject.transform.position = item.gameObject.GetComponent<InfoOfUnit>().UnitsPosition;
-                            item.gameObject.transform.rotation = item.gameObject.GetComponent<InfoOfUnit>().UnitsRotation;
-                            item.gameObject.GetComponent<UnitController>().isNewRoundStarted = true;
-                        }
-                        else
-                        {
-                            if (!isUnitsReturnedToPosition)//if units are active, sets their position and rotation from their saved informations just once to prevent bugs
+                            if (!item.gameObject.activeInHierarchy)//if units are not active(dead), activates them and sets their position and rotation from their saved informations
                             {
-                                if (item.gameObject.GetComponent<InfoOfUnit>().UnitsPosition != Vector3.zero)
+                                item.gameObject.SetActive(true);
+                                item.gameObject.transform.position = item.gameObject.GetComponent<InfoOfUnit>().UnitsPosition;
+                                item.gameObject.transform.rotation = item.gameObject.GetComponent<InfoOfUnit>().UnitsRotation;
+                                item.gameObject.GetComponent<UnitController>().isNewRoundStarted = true;
+                            }
+                            else
+                            {
+                                if (!isUnitsReturnedToPosition)//if units are active, sets their position and rotation from their saved informations just once to prevent bugs
                                 {
-                                    item.gameObject.transform.position = item.gameObject.GetComponent<InfoOfUnit>().UnitsPosition;
-                                    item.gameObject.transform.rotation = item.gameObject.GetComponent<InfoOfUnit>().UnitsRotation;
-                                    isUnitsReturnedToPosition = true;
+                                    if (item.gameObject.GetComponent<InfoOfUnit>().UnitsPosition != Vector3.zero)
+                                    {
+                                        item.gameObject.transform.position = item.gameObject.GetComponent<InfoOfUnit>().UnitsPosition;
+                                        item.gameObject.transform.rotation = item.gameObject.GetComponent<InfoOfUnit>().UnitsRotation;
+                                        isUnitsReturnedToPosition = true;
+                                    }
                                 }
                             }
                         }
