@@ -140,8 +140,15 @@ public class UnitController : MonoBehaviour
                     if (enemyNumber == 0)//if there is no enemy unit, the player won the round
                     {
                         isRoundWon = true;
-                        _camera.GetComponent<CamCharacter>().WonTheLevel = true;
-                        Debug.Log(_camera);
+                        if (_camera.GetComponent<CamCharacter>().Id - 1 == gameObject.GetComponent<InfoOfUnit>().TeamNumber)
+                        {
+                            _camera.GetComponent<CamCharacter>().WonTheLevel = true;
+                            Debug.Log(_camera);
+                        }
+                        else
+                        {
+                            Debug.Log("you lost");
+                        }
                     }
                 }
 

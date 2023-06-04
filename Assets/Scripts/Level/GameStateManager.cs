@@ -16,8 +16,10 @@ public class GameStateManager : MonoBehaviour
     private GameObject[] grids;
     private bool isUnitsReturnedToPosition = false;
     [SerializeField] private Button shopButton;
-    private int roundCounter = 0;
+    private int roundCounter = 1;
     private int maxRoundNumber = 8;
+    [SerializeField] private TextMeshProUGUI roundCounterUIText;
+    private bool doItOnce = false;
 
     private void Start()
     {
@@ -29,6 +31,7 @@ public class GameStateManager : MonoBehaviour
         {
             if(shoppingTimer >= 0 && !isRoundStarted)//checks timer is not finished and round is not started
             {
+                doItOnce = true;
                 if (!shopButton.gameObject.activeInHierarchy)
                 {
                     shopButton.gameObject.SetActive(true);
@@ -55,12 +58,12 @@ public class GameStateManager : MonoBehaviour
                                     {
                                         item.gameObject.transform.position = item.gameObject.GetComponent<InfoOfUnit>().UnitsPosition;
                                         item.gameObject.transform.rotation = item.gameObject.GetComponent<InfoOfUnit>().UnitsRotation;
-                                        isUnitsReturnedToPosition = true;
                                     }
                                 }
                             }
                         }
                     }
+                    isUnitsReturnedToPosition = true;
                 }
                 
 
@@ -69,42 +72,48 @@ public class GameStateManager : MonoBehaviour
                     shoppingTimerUIText.gameObject.SetActive(true);
                 }
                 int secondsLeft = Mathf.RoundToInt(shoppingTimer);
-                shoppingTimerUIText.text = secondsLeft.ToString();
+                shoppingTimerUIText.text = "Time\n" + secondsLeft.ToString();
                 shoppingTimer -= Time.deltaTime;
             }
             else
             {
-                if (shoppingTimerUIText.gameObject.activeInHierarchy)
+                if (doItOnce)
                 {
-                    shoppingTimerUIText.gameObject.SetActive(false);
-                }
-                shoppingTimer = 30;
-                isRoundStarted = true;
-                if (roundCounter != maxRoundNumber)
-                {
-                    roundCounter++;
-                    CamCharacter[] camCharacters = GameObject.FindObjectsOfType<CamCharacter>();
-                    foreach (CamCharacter item in camCharacters)
+                    doItOnce = false;
+                    if (shoppingTimerUIText.gameObject.activeInHierarchy)
                     {
-                        if (item.WonTheLevel)
+                        shoppingTimerUIText.gameObject.SetActive(false);
+                    }
+                    shoppingTimer = 30;
+                    isRoundStarted = true;
+                    if (roundCounter != maxRoundNumber)
+                    {
+                        roundCounter++;
+                        roundCounterUIText.text = "Round\n" + roundCounter.ToString() + "/" + maxRoundNumber.ToString();
+                        CamCharacter[] camCharacters = GameObject.FindObjectsOfType<CamCharacter>();
+                        foreach (CamCharacter item in camCharacters)
                         {
-                            item.CurrencyValue += 10;
-                        }
-                        else
-                        {
-                            item.CurrencyValue += 5;
+                            if (item.WonTheLevel)
+                            {
+                                item.CurrencyValue += 10;
+                            }
+                            else
+                            {
+                                item.CurrencyValue += 5;
+                            }
                         }
                     }
-                }
-                else
-                {
-                    Debug.Log("game is finished");
+                    else
+                    {
+                        Debug.Log("game is finished");
+                        Application.Quit();
+                    }
+                    if (shopButton.gameObject.activeInHierarchy)
+                    {
+                        shopButton.gameObject.SetActive(false);
+                    }
                 }
                 isUnitsReturnedToPosition = false;
-                if (shopButton.gameObject.activeInHierarchy)
-                {
-                    shopButton.gameObject.SetActive(false);
-                }
             }
         }
         else
