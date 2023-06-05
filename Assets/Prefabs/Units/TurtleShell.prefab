@@ -292,6 +292,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59ab38522ba48b54ea5462c418c8b8c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isNewRoundStarted: 1
+  isOnTheBench: 0
 --- !u!114 &95528395705616184
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -308,7 +310,7 @@ MonoBehaviour:
   unitGameObject: {fileID: 4324649356895532158}
   animator: {fileID: 4418550458471886874}
   teamNumber: 0
-  healthValue: 100
+  healthValue: 25
   damageValue: 10
 --- !u!136 &6312215028117544312
 CapsuleCollider:

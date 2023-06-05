@@ -10,6 +10,7 @@ public class CamCharacter : MonoBehaviour
     [SerializeField] private Vector3 spawnPoint;
     [SerializeField] private int currencyValue = 50;
     private bool wonTheLevel = false;
+    private int winCounter = 0;
 
     public int Id => id;
     public string DisplayName => displayName;
@@ -24,5 +25,11 @@ public class CamCharacter : MonoBehaviour
     {
         get => wonTheLevel;
         set => wonTheLevel = value;
+    }
+
+    public int WinCounter
+    {
+        get => winCounter;
+        set => winCounter = value;
     }
 }

@@ -139,7 +139,7 @@ MonoBehaviour:
   unitGameObject: {fileID: 7841088374105108580}
   animator: {fileID: 7841088374105108581}
   teamNumber: 0
-  healthValue: 800
+  healthValue: 100
   damageValue: 15
 --- !u!114 &1957523958
 MonoBehaviour:
@@ -153,6 +153,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59ab38522ba48b54ea5462c418c8b8c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isNewRoundStarted: 1
+  isOnTheBench: 0
 --- !u!136 &1456360325455284131
 CapsuleCollider:
   m_ObjectHideFlags: 0

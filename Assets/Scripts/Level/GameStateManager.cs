@@ -16,10 +16,11 @@ public class GameStateManager : MonoBehaviour
     private GameObject[] grids;
     private bool isUnitsReturnedToPosition = false;
     [SerializeField] private Button shopButton;
-    private int roundCounter = 1;
+    private int roundCounter = 0;
     private int maxRoundNumber = 8;
     [SerializeField] private TextMeshProUGUI roundCounterUIText;
     private bool doItOnce = false;
+    [SerializeField] private TextMeshProUGUI winCounterUIText;
 
     private void Start()
     {
@@ -96,11 +97,13 @@ public class GameStateManager : MonoBehaviour
                             if (item.WonTheLevel)
                             {
                                 item.CurrencyValue += 10;
+                                item.WinCounter++;
                             }
                             else
                             {
                                 item.CurrencyValue += 5;
                             }
+                            winCounterUIText.text = "Win\n" + item.WinCounter.ToString();
                         }
                     }
                     else
@@ -123,5 +126,10 @@ public class GameStateManager : MonoBehaviour
                 gameIsStarted = true;
             }
         }
+    }
+
+    public void QuitMethod()
+    {
+        Application.Quit();
     }
 }
