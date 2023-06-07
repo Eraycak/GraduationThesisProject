@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ShoppingManager : MonoBehaviour
+public class ShoppingManager : NetworkBehaviour
 {
     [SerializeField] private List<GameObject> benchGameObjects = new List<GameObject>(); // Reference to the Bench game objects
     [SerializeField] private TMP_Text currencyText; // Text component to display the player's currency
@@ -15,6 +16,11 @@ public class ShoppingManager : MonoBehaviour
     [SerializeField] private TMP_Text benchFullText;
     [SerializeField] private TMP_Text currencyNotEnoughText;
     private Camera _camera = null;
+    private GameObject unit = null;
+    private Vector3 spawnLocation = Vector3.zero;
+    private Vector3 spawnRotation = Vector3.zero;
+    private string spawnObjectName = null;
+    //private int currentPlayerNumber = -3;
 
     private void Awake()
     {
@@ -81,14 +87,7 @@ public class ShoppingManager : MonoBehaviour
         if (!benchGameObjects[currentPlayerTeamNumber].GetComponent<Bench>().benchsAreFull)
         {
             string nameOfImage = transformOfUnit.name.Remove(0, 6);
-            GameObject spawnObject = null;
-            foreach (GameObject _gameObject in listUnits)
-            {
-                if (_gameObject.name.Contains(nameOfImage))
-                {
-                    spawnObject = _gameObject;
-                }
-            }
+            GameObject spawnObject = GetObjectFromName(nameOfImage);
             if (playerCurrencyValue >= spawnObject.GetComponent<InfoOfUnit>().costOfUnit)
             {
                 Vector3 spawnLocation = benchGameObjects[currentPlayerTeamNumber].GetComponent<Bench>().LocationForBoughtUnit();
@@ -97,12 +96,12 @@ public class ShoppingManager : MonoBehaviour
                 {
                     spawnRotation = new Vector3(0, -90, 0);
                 }
-                GameObject unit = Instantiate(spawnObject, spawnLocation, Quaternion.Euler(spawnRotation));
-                unit.GetComponent<InfoOfUnit>().TeamNumber = currentPlayerTeamNumber;
-                float realTimeSeconds = Time.realtimeSinceStartup;
-                unit.name = unit.name + realTimeSeconds.ToString("0.0");
+                this.spawnObjectName = nameOfImage;
+                this.spawnRotation = spawnRotation;
+                this.spawnLocation = spawnLocation;
                 // Deduct the unit cost from the player's currency
-                UpdateCurrency(unit.GetComponent<InfoOfUnit>().costOfUnit);
+                UpdateCurrency(spawnObject.GetComponent<InfoOfUnit>().costOfUnit);
+                SpawnObject();
             }
             else
             {
@@ -117,9 +116,57 @@ public class ShoppingManager : MonoBehaviour
         }
     }
 
+    private GameObject GetObjectFromName(string nameOfImage)
+    {
+        GameObject spawnObject = null;
+        foreach (GameObject _gameObject in listUnits)
+        {
+            if (_gameObject.name.Contains(nameOfImage))
+            {
+                spawnObject = _gameObject;
+            }
+        }
+
+        return spawnObject;
+    }
+
     private IEnumerator WaitUntilDisable(GameObject _gameObject)
     {
         yield return new WaitForSeconds(1f);
         _gameObject.SetActive(false);
+    }
+
+    private void SpawnObject()
+    {
+        if (NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsHost)
+        {
+            Spawner(spawnObjectName, spawnLocation, spawnRotation, currentPlayerTeamNumber, NetworkManager.Singleton.LocalClientId);
+        }
+        else
+        {
+            SpawnOnServerRpc(spawnObjectName, spawnLocation, spawnRotation, currentPlayerTeamNumber);
+        }
+    }
+
+    private void Spawner(string _spawnObjectName, Vector3 _spawnLocation, Vector3 _spawnRotation, int _currentPlayerTeamNumber, ulong clientId)
+    {
+        GameObject _spawnObject = GetObjectFromName(_spawnObjectName);
+        unit = Instantiate(_spawnObject, _spawnLocation, Quaternion.Euler(_spawnRotation));
+        NetworkObject networkObject = unit.GetComponent<NetworkObject>();
+        networkObject.Spawn();
+        networkObject.ChangeOwnership(clientId);
+        unit.GetComponent<InfoOfUnit>().TeamNumber = _currentPlayerTeamNumber;
+        float realTimeSeconds = Time.realtimeSinceStartup;
+        unit.name = unit.name + realTimeSeconds.ToString("0.0");
+        unit = null;
+        spawnObjectName = null;
+        spawnLocation = Vector3.zero;
+        spawnRotation = Vector3.zero;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void SpawnOnServerRpc(string _spawnObjectName, Vector3 _spawnLocation, Vector3 _spawnRotation, int _currentPlayerTeamNumber, ServerRpcParams serverRpcParams = default)
+    {
+        Spawner(_spawnObjectName, _spawnLocation, _spawnRotation, _currentPlayerTeamNumber, serverRpcParams.Receive.SenderClientId);
     }
 }

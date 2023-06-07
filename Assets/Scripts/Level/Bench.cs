@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Bench : MonoBehaviour
+public class Bench : NetworkBehaviour
 {
     private int numBenchSlots;
     private int emptyBenchSlots;

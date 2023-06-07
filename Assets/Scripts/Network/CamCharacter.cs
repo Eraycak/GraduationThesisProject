@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
 public class CamCharacter : MonoBehaviour
 {
@@ -31,5 +32,10 @@ public class CamCharacter : MonoBehaviour
     {
         get => winCounter;
         set => winCounter = value;
+    }
+
+    private void Awake()
+    {
+        gameObject.GetComponent<Camera>().enabled = true;
     }
 }

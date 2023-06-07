@@ -4,8 +4,9 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
+using Unity.Netcode;
 
-public class GameStateManager : MonoBehaviour
+public class GameStateManager : NetworkBehaviour
 {
     private string gamePlaySceneName = "GamePlay";
     private bool gameIsStarted = false;

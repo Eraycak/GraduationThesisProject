@@ -1,12 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Principal;
+using Unity.Netcode;
+using Unity.Netcode.Components;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
 
-public class UnitController : MonoBehaviour
+public class UnitController : NetworkBehaviour
 {
     private Outline outline;
     private Vector3 worldPosition;
@@ -168,6 +171,7 @@ public class UnitController : MonoBehaviour
                             isWalkingAnimPlaying = true;
                             ChangeToMoveAnimation();
                         }
+                        PositionObject(gameObject.transform.position);
                     }
                     else
                     {//if there is no target position, stops walking and walking animation
@@ -284,6 +288,11 @@ public class UnitController : MonoBehaviour
         {
             if (Camera.allCamerasCount > 1)
             {
+                if (IsClient)
+                {
+                    // Call the ClientRpc method to send the new position to the server
+                    PositionObject(worldPosition);
+                }
                 //prevents players to access enemy units
                 if ((_camera.name.Contains("First")) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber == 0))
                 {
@@ -430,6 +439,8 @@ public class UnitController : MonoBehaviour
                 }
             }
         }
+
+        PositionObject(gameObject.transform.position);
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -545,5 +556,35 @@ public class UnitController : MonoBehaviour
             Vector3 avoidanceDirection = transform.position - friendGameObject.transform.position;
             gameObject.transform.position += avoidanceDirection / 2;//calculated distance is to big therefore it is divided
         }
+    }
+
+    private void PositionObject(Vector3 position)
+    {
+        if (NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsHost)
+        {
+            Positioner(position, NetworkManager.Singleton.LocalClientId);
+        }
+        else
+        {
+            UpdatePositionServerRpc(position);
+        }
+    }
+
+    private void Positioner(Vector3 position, ulong clientId)
+    {
+        transform.position = position;
+        foreach (var item in grids)
+        {
+            if (item.GetComponent<Grid>() != null && item.GetComponent<Grid>().isActiveAndEnabled)
+            {
+                item.GetComponent<Grid>().UpdateGameObjectOnTheGrid();
+            }
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void UpdatePositionServerRpc(Vector3 position, ServerRpcParams serverRpcParams = default)
+    {
+        Positioner(position, serverRpcParams.Receive.SenderClientId);
     }
 }

@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
@@ -7,7 +6,6 @@ using Unity.Networking.Transport.Relay;
 using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
 using UnityEngine.SceneManagement;
-using UnityEditor.PackageManager;
 using System;
 
 public class HostManager : MonoBehaviour
@@ -15,7 +13,7 @@ public class HostManager : MonoBehaviour
     [Header("Settings")]
     [SerializeField] private string characterSelectSceneName = "CharacterSelect";
     [SerializeField] private string gameplaySceneName = "Gameplay";
-    [SerializeField] private int ServerClientCapacity = 2;
+    [SerializeField] private int ServerClientCapacity = 4;
     public static HostManager Instance { get; private set; }
     private bool gameHasStarted;
     public Dictionary<ulong, ClientData> ClientData { get; private set; }

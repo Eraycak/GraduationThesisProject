@@ -1,13 +1,5 @@
 using Unity.Netcode;
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.Netcode.Transports.UTP;
-using Unity.Networking.Transport.Relay;
-using Unity.Services.Relay;
-using Unity.Services.Relay.Models;
-using UnityEngine.SceneManagement;
-using UnityEditor.PackageManager;
 
 [CreateAssetMenu(fileName = "New Character", menuName = "Characters/Character")]
 public class Character : ScriptableObject

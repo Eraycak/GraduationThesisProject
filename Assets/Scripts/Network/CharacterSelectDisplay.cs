@@ -1,17 +1,8 @@
 using UnityEngine;
 using TMPro;
 using Unity.Netcode;
-using System;
 using UnityEngine.UI;
 using System.Collections.Generic;
-using UnityEngine.TextCore.Text;
-using System.Collections;
-using Unity.Netcode.Transports.UTP;
-using Unity.Networking.Transport.Relay;
-using Unity.Services.Relay;
-using Unity.Services.Relay.Models;
-using UnityEngine.SceneManagement;
-using UnityEditor.PackageManager;
 
 public class CharacterSelectDisplay : NetworkBehaviour
 {
