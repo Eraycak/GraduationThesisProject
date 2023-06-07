@@ -81,6 +81,7 @@ GameObject:
   - component: {fileID: 1039674199}
   - component: {fileID: 2961927021802552855}
   - component: {fileID: 4393998976123738839}
+  - component: {fileID: -2899902135800969319}
   m_Layer: 0
   m_Name: GruntPolyart
   m_TagString: Untagged
@@ -144,6 +145,7 @@ MonoBehaviour:
   teamNumber: 0
   healthValue: 100
   damageValue: 15
+  startHealthValue: 100
 --- !u!114 &1957523958
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -242,6 +244,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6c0be61502bb534f922ebb746851216, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-2899902135800969319
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7841088374105108580}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8d0727d5ae3244e3b569694d3912374, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TransitionStateInfoList: []
+  m_Animator: {fileID: 7841088374105108581}
 --- !u!1 &7841088374148075099
 GameObject:
   m_ObjectHideFlags: 0

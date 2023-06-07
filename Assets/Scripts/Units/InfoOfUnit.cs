@@ -15,6 +15,7 @@ public class InfoOfUnit : MonoBehaviour
     private Vector3 unitsPosition = Vector3.zero;
     private Quaternion unitsRotation = Quaternion.identity;
     internal int costOfUnit = 5;
+    [SerializeField] private int startHealthValue;
 
     public string Name
     {
@@ -70,5 +71,10 @@ public class InfoOfUnit : MonoBehaviour
         Animator.SetTrigger("Died");
         yield return new WaitForSeconds(2f);
         gameObject.SetActive(false);
+    }
+
+    public int StartHealthValue
+    {
+        get { return startHealthValue; }
     }
 }

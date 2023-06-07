@@ -238,6 +238,7 @@ GameObject:
   - component: {fileID: 2082565189}
   - component: {fileID: 458879146737160430}
   - component: {fileID: 6929244426611532355}
+  - component: {fileID: 8269408803412939754}
   m_Layer: 0
   m_Name: TurtleShell
   m_TagString: Untagged
@@ -315,6 +316,7 @@ MonoBehaviour:
   teamNumber: 0
   healthValue: 25
   damageValue: 10
+  startHealthValue: 25
 --- !u!136 &6312215028117544312
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -399,6 +401,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6c0be61502bb534f922ebb746851216, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &8269408803412939754
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4324649356895532158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8d0727d5ae3244e3b569694d3912374, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TransitionStateInfoList: []
+  m_Animator: {fileID: 4418550458471886874}
 --- !u!1 &4324651912896543436
 GameObject:
   m_ObjectHideFlags: 0

@@ -51,6 +51,15 @@ public class GameStateManager : NetworkBehaviour
                                 item.gameObject.transform.position = item.gameObject.GetComponent<InfoOfUnit>().UnitsPosition;
                                 item.gameObject.transform.rotation = item.gameObject.GetComponent<InfoOfUnit>().UnitsRotation;
                                 item.gameObject.GetComponent<UnitController>().isNewRoundStarted = true;
+                                item.gameObject.GetComponent<InfoOfUnit>().HealthValue = item.gameObject.GetComponent<InfoOfUnit>().StartHealthValue;
+                                item.gameObject.GetComponent<UnitController>().inCombat = false;
+                                item.gameObject.GetComponent<UnitController>().isMoving = false;
+                                item.gameObject.GetComponent<UnitController>().targetPosition = null;
+                                item.gameObject.GetComponent<UnitController>().isCollidedWithEnemy = false;
+                                item.gameObject.GetComponent<UnitController>().isRoundWon = false;
+                                item.gameObject.GetComponent<UnitController>().isWalkingAnimPlaying = false;
+                                item.gameObject.GetComponent<UnitController>().isAttackingAnimPlaying = false;
+                                item.gameObject.GetComponent<UnitController>().isNewRoundStarted = true;
                             }
                             else
                             {
@@ -60,6 +69,15 @@ public class GameStateManager : NetworkBehaviour
                                     {
                                         item.gameObject.transform.position = item.gameObject.GetComponent<InfoOfUnit>().UnitsPosition;
                                         item.gameObject.transform.rotation = item.gameObject.GetComponent<InfoOfUnit>().UnitsRotation;
+                                        item.gameObject.GetComponent<InfoOfUnit>().HealthValue = item.gameObject.GetComponent<InfoOfUnit>().StartHealthValue;
+                                        item.gameObject.GetComponent<UnitController>().inCombat = false;
+                                        item.gameObject.GetComponent<UnitController>().isMoving = false;
+                                        item.gameObject.GetComponent<UnitController>().targetPosition = null;
+                                        item.gameObject.GetComponent<UnitController>().isCollidedWithEnemy = false;
+                                        item.gameObject.GetComponent<UnitController>().isRoundWon = false;
+                                        item.gameObject.GetComponent<UnitController>().isWalkingAnimPlaying = false;
+                                        item.gameObject.GetComponent<UnitController>().isAttackingAnimPlaying = false;
+                                        item.gameObject.GetComponent<UnitController>().isNewRoundStarted = true;
                                     }
                                 }
                             }

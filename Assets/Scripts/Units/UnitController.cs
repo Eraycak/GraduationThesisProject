@@ -18,16 +18,16 @@ public class UnitController : NetworkBehaviour
     private GameObject[] grids;
     private GameObject[] benchs;
     private GameObject benchGameObject;
-    private bool inCombat = false;
-    private bool isMoving = false;
+    internal bool inCombat = false;
+    internal bool isMoving = false;
     private float unitMoveSpeed = 1f;
-    private Transform targetPosition;
-    private bool isCollidedWithEnemy = false;
-    private bool isRoundWon = false;
-    private bool isWalkingAnimPlaying = false;
-    private bool isAttackingAnimPlaying = false;
+    internal Transform targetPosition;
+    internal bool isCollidedWithEnemy = false;
+    internal bool isRoundWon = false;
+    internal bool isWalkingAnimPlaying = false;
+    internal bool isAttackingAnimPlaying = false;
     private GameStateManager gameStateManager = null;
-    public bool isNewRoundStarted = true;
+    internal bool isNewRoundStarted = true;
     public bool isOnTheBench = false;
     private Camera _camera = null;
 
@@ -183,13 +183,13 @@ public class UnitController : NetworkBehaviour
             else if (isRoundWon)//if round is won resets unit
             {
                 gameStateManager.isRoundStarted = false;
-                isRoundWon = false;
                 inCombat = false;
                 isMoving = false;
                 isCollidedWithEnemy = false;
                 isWalkingAnimPlaying = false;
                 isAttackingAnimPlaying = false;
                 isNewRoundStarted = true;
+                isRoundWon = false;
             }
         }
     }

@@ -432,6 +432,7 @@ GameObject:
   - component: {fileID: 1171253253}
   - component: {fileID: 3622812453171032279}
   - component: {fileID: 8438137727344735886}
+  - component: {fileID: -3112926520474511453}
   m_Layer: 0
   m_Name: FreeLichPolyart
   m_TagString: Untagged
@@ -509,6 +510,7 @@ MonoBehaviour:
   teamNumber: 0
   healthValue: 150
   damageValue: 20
+  startHealthValue: 150
 --- !u!136 &4313119664741863830
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -593,6 +595,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6c0be61502bb534f922ebb746851216, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-3112926520474511453
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4868396589473980291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8d0727d5ae3244e3b569694d3912374, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TransitionStateInfoList: []
+  m_Animator: {fileID: 2534054716241965044}
 --- !u!1 &4883956037097514487
 GameObject:
   m_ObjectHideFlags: 0
