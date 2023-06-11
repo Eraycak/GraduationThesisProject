@@ -14,7 +14,7 @@ public class InfoOfUnit : MonoBehaviour
     [SerializeField] private int damageValue;
     private Vector3 unitsPosition = Vector3.zero;
     private Quaternion unitsRotation = Quaternion.identity;
-    internal int costOfUnit = 5;
+    [SerializeField] internal int costOfUnit = 5;
     [SerializeField] private int startHealthValue;
 
     public string Name

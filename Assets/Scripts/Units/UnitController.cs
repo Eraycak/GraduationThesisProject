@@ -20,7 +20,7 @@ public class UnitController : NetworkBehaviour
     private GameObject benchGameObject;
     internal bool inCombat = false;
     internal bool isMoving = false;
-    private float unitMoveSpeed = 1f;
+    [SerializeField] private float unitMoveSpeed = 1f;
     internal Transform targetPosition;
     internal bool isCollidedWithEnemy = false;
     internal bool isRoundWon = false;
@@ -30,6 +30,8 @@ public class UnitController : NetworkBehaviour
     internal bool isNewRoundStarted = true;
     public bool isOnTheBench = false;
     private Camera _camera = null;
+    [SerializeField] private float attackSpeedTimer = 2f;
+    private bool canHit = true;
 
     private void Start()
     {
@@ -516,23 +518,28 @@ public class UnitController : NetworkBehaviour
         //damages enemy every two seconds while being collided
         while (isCollidedWithEnemy)
         {
-            //checks enemy is died to stop attacking
-            if (enemyGameObject == null || !enemyGameObject.activeInHierarchy)
+            if (canHit)
             {
-                isCollidedWithEnemy = false;
-                inCombat = false;
-                isAttackingAnimPlaying = false;
-            }
-            else
-            {
-                enemyGameObject.GetComponent<InfoOfUnit>().HealthValue -= gameObject.GetComponent<InfoOfUnit>().DamageValue;//reduces enemy unit health
-                if (!isAttackingAnimPlaying)//sets attacking anim
+                canHit = false;
+                //checks enemy is died to stop attacking
+                if (enemyGameObject == null || !enemyGameObject.activeInHierarchy)
                 {
-                    isAttackingAnimPlaying = true;
-                    ChangeToAttackAnimation();
+                    isCollidedWithEnemy = false;
+                    inCombat = false;
+                    isAttackingAnimPlaying = false;
+                }
+                else
+                {
+                    enemyGameObject.GetComponent<InfoOfUnit>().HealthValue -= gameObject.GetComponent<InfoOfUnit>().DamageValue;//reduces enemy unit health
+                    if (!isAttackingAnimPlaying)//sets attacking anim
+                    {
+                        isAttackingAnimPlaying = true;
+                        ChangeToAttackAnimation();
+                    }
                 }
             }
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(attackSpeedTimer);
+            canHit = true;
         }
     }
 
@@ -573,11 +580,24 @@ public class UnitController : NetworkBehaviour
     private void Positioner(Vector3 position, ulong clientId)
     {
         transform.position = position;
+        bool isAlreadyOnTheGrid = false;
         foreach (var item in grids)
         {
             if (item.GetComponent<Grid>() != null && item.GetComponent<Grid>().isActiveAndEnabled)
             {
-                item.GetComponent<Grid>().UpdateGameObjectOnTheGrid();
+                foreach (var objectonGrid in item.GetComponent<Grid>().gameObjectsOnGrid)
+                {
+                    if (objectonGrid.gameObject.name == gameObject.name)
+                    {
+                        isAlreadyOnTheGrid = true;
+                        break;
+                    }
+                }
+
+                if (!isAlreadyOnTheGrid)
+                {
+                    item.GetComponent<Grid>().UpdateGameObjectOnTheGrid();
+                }
             }
         }
     }

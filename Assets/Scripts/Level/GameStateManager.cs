@@ -17,7 +17,7 @@ public class GameStateManager : NetworkBehaviour
     private GameObject[] grids;
     private bool isUnitsReturnedToPosition = false;
     [SerializeField] private Button shopButton;
-    private int roundCounter = 0;
+    private int roundCounter = 1;
     private int maxRoundNumber = 8;
     [SerializeField] private TextMeshProUGUI roundCounterUIText;
     private bool doItOnce = false;
