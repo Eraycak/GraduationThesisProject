@@ -66,7 +66,7 @@ public class GameStateManager : NetworkBehaviour
                                     item.gameObject.GetComponent<InfoOfUnit>().HealthValue = item.gameObject.GetComponent<InfoOfUnit>().StartHealthValue;
                                     item.gameObject.GetComponent<UnitController>().inCombat.Value = false;
                                     item.gameObject.GetComponent<UnitController>().isMoving.Value = false;
-                                    item.gameObject.GetComponent<UnitController>().targetPosition = null;
+                                    item.gameObject.GetComponent<UnitController>().targetPosition.Value = Vector3.one;
                                     item.gameObject.GetComponent<UnitController>().isCollidedWithEnemy.Value = false;
                                     item.gameObject.GetComponent<UnitController>().isRoundWon.Value = false;
                                     item.gameObject.GetComponent<UnitController>().isWalkingAnimPlaying.Value = false;
@@ -84,7 +84,7 @@ public class GameStateManager : NetworkBehaviour
                                             item.gameObject.GetComponent<InfoOfUnit>().HealthValue = item.gameObject.GetComponent<InfoOfUnit>().StartHealthValue;
                                             item.gameObject.GetComponent<UnitController>().inCombat.Value = false;
                                             item.gameObject.GetComponent<UnitController>().isMoving.Value = false;
-                                            item.gameObject.GetComponent<UnitController>().targetPosition = null;
+                                            item.gameObject.GetComponent<UnitController>().targetPosition.Value = Vector3.one;
                                             item.gameObject.GetComponent<UnitController>().isCollidedWithEnemy.Value = false;
                                             item.gameObject.GetComponent<UnitController>().isRoundWon.Value = false;
                                             item.gameObject.GetComponent<UnitController>().isWalkingAnimPlaying.Value = false;

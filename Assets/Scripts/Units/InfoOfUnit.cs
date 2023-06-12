@@ -85,14 +85,7 @@ public class InfoOfUnit : NetworkBehaviour
 
     private void Start()
     {
-        UnitsPosition.Value = Vector3.zero;
-        UnitsRotation.Value = Quaternion.identity;
-        costOfUnit = 5;
-        HealthValue.Value = localHealthValue;
-        startHealthValue.Value = localHealthValue;
-        DamageValue.Value = localDamageValue;
-        Animator = localAnimator;
-        HealthValue.OnValueChanged += OnHealthValueChanged;
+        UpdateVariablesInfo(Vector3.zero, Quaternion.identity, localHealthValue);
     }
 
     private void OnHealthValueChanged(int oldValue, int newValue)
@@ -101,5 +94,34 @@ public class InfoOfUnit : NetworkBehaviour
         {
             StartCoroutine(DieAnimationCoroutine());
         }
+    }
+
+    public void UpdateVariablesInfo(Vector3 _pos, Quaternion _rot, int _healthVal)
+    {
+        if (NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsHost)
+        {
+            UpdateNetworkVariablesInfo(_pos, _rot, _healthVal);
+        }
+        else
+        {
+            UpdateNetworkVariablesInfoServerRpc(_pos, _rot, _healthVal);
+        }
+    }
+
+    public void UpdateNetworkVariablesInfo(Vector3 _pos, Quaternion _rot, int _healthVal)
+    {
+        UnitsPosition.Value = _pos;
+        UnitsRotation.Value = _rot;
+        HealthValue.Value = _healthVal;
+        startHealthValue.Value = localHealthValue;
+        DamageValue.Value = localDamageValue;
+        Animator = localAnimator;
+        HealthValue.OnValueChanged += OnHealthValueChanged;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void UpdateNetworkVariablesInfoServerRpc(Vector3 _pos, Quaternion _rot, int _healthVal, ServerRpcParams serverRpcParams = default)
+    {
+        UpdateNetworkVariablesInfo(_pos, _rot, _healthVal);
     }
 }

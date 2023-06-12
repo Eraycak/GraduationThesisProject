@@ -21,7 +21,7 @@ public class UnitController : NetworkBehaviour
     public NetworkVariable<bool> inCombat;
     public NetworkVariable<bool> isMoving;
     [SerializeField] private float unitMoveSpeed = 1f;
-    public Transform targetPosition;
+    public NetworkVariable<Vector3> targetPosition;
     public NetworkVariable<bool> isCollidedWithEnemy;
     public NetworkVariable<bool> isRoundWon;
     public NetworkVariable<bool> isWalkingAnimPlaying;
@@ -35,14 +35,7 @@ public class UnitController : NetworkBehaviour
 
     private void Start()
     {
-        inCombat.Value = false;
-        isMoving.Value = false;
-        isCollidedWithEnemy.Value = false;
-        isRoundWon.Value = false;
-        isWalkingAnimPlaying.Value = false;
-        isAttackingAnimPlaying.Value = false;
-        isNewRoundStarted.Value = true;
-        isOnTheBench.Value = false;
+        UpdateVariables(false, false, false, false, false, false, true, false, Vector3.one);
 
         grids = GameObject.FindGameObjectsWithTag("Grid");
         if (gameObject.GetComponent<InfoOfUnit>().TeamNumber.Value == 0)
@@ -120,16 +113,69 @@ public class UnitController : NetworkBehaviour
 
         if (!isOnTheBench.Value)
         {
+            if (gameStateManager == null)
+            {
+                gameStateManager = FindFirstObjectByType<GameStateManager>();
+            }
+
+            if (gridGameObject == null)
+            {
+                grids = GameObject.FindGameObjectsWithTag("Grid");
+                if (gameObject.GetComponent<InfoOfUnit>().TeamNumber.Value == 0)
+                {
+                    if (grids[0].gameObject.transform.name == "Grid")
+                    {
+                        gridGameObject = grids[0];
+                    }
+                    else
+                    {
+                        gridGameObject = grids[1];
+                    }
+                }
+                else
+                {
+                    if (grids[0].gameObject.transform.name == "Grid")
+                    {
+                        gridGameObject = grids[1];
+                    }
+                    else
+                    {
+                        gridGameObject = grids[0];
+                    }
+                }
+            }
+
+            if (benchGameObject == null)
+            {
+                benchs = GameObject.FindGameObjectsWithTag("Bench");
+                if (gameObject.GetComponent<InfoOfUnit>().TeamNumber.Value == 0)
+                {
+                    if (benchs[0].gameObject.transform.name == "Bench")
+                    {
+                        benchGameObject = benchs[0];
+                    }
+                    else
+                    {
+                        benchGameObject = benchs[1];
+                    }
+                }
+                else
+                {
+                    if (benchs[0].gameObject.transform.name == "Bench")
+                    {
+                        benchGameObject = benchs[1];
+                    }
+                    else
+                    {
+                        benchGameObject = benchs[0];
+                    }
+                }
+            }
+
             if (!isRoundWon.Value && gameStateManager.isRoundStarted.Value)//checks if round is won by one of the players
             {
                 if (isNewRoundStarted.Value)//if new round is started resets unit
                 {
-                    isRoundWon.Value = false;
-                    inCombat.Value = false;
-                    isMoving.Value = false;
-                    isCollidedWithEnemy.Value = false;
-                    isWalkingAnimPlaying.Value = false;
-                    isAttackingAnimPlaying.Value = false;
                     if (gameObject.GetComponent<InfoOfUnit>().UnitsPosition.Value == Vector3.zero)
                     {
                         gameObject.GetComponent<InfoOfUnit>().UnitsPosition.Value = gameObject.transform.position;//saves units position and rotation before round starts. And returns it to there after round finishes.
@@ -137,7 +183,7 @@ public class UnitController : NetworkBehaviour
                     }
                     gameObject.transform.position = gameObject.GetComponent<InfoOfUnit>().UnitsPosition.Value;//returns unit to started position and rotation at every round.
                     gameObject.transform.rotation = gameObject.GetComponent<InfoOfUnit>().UnitsRotation.Value;
-                    isNewRoundStarted.Value = false;
+                    UpdateVariables(false, false, false, false, false, false, false, false, Vector3.one);
                 }
 
                 if (gridGameObject.GetComponent<Grid>().gameObjectsOnGrid != null && !inCombat.Value)
@@ -156,7 +202,7 @@ public class UnitController : NetworkBehaviour
                     }
                     if (enemyNumber == 0)//if there is no enemy unit, the player won the round
                     {
-                        isRoundWon.Value = true;
+                        UpdateVariables(inCombat.Value, isMoving.Value, isCollidedWithEnemy.Value, true, isWalkingAnimPlaying.Value, isAttackingAnimPlaying.Value, isNewRoundStarted.Value, isOnTheBench.Value, Vector3.one);
                         if (_camera.GetComponent<CamCharacter>().Id - 1 == gameObject.GetComponent<InfoOfUnit>().TeamNumber.Value)
                         {
                             _camera.GetComponent<CamCharacter>().WonTheLevel = true;
@@ -172,25 +218,24 @@ public class UnitController : NetworkBehaviour
                 if (isMoving.Value)
                 {
                     var step = unitMoveSpeed * Time.deltaTime;
-                    if (targetPosition != null)
+                    if (Vector3.Distance(targetPosition.Value, Vector3.one) > 0f)
                     {
-                        gameObject.transform.position = Vector3.MoveTowards(gameObject.transform.position, targetPosition.transform.position, step);//moves unit to enemy units position step by step
-                        Vector3 direction = targetPosition.transform.position - gameObject.transform.position;
+                        gameObject.transform.position = Vector3.MoveTowards(gameObject.transform.position, targetPosition.Value, step);//moves unit to enemy units position step by step
+                        Vector3 direction = targetPosition.Value - gameObject.transform.position;
                         if (direction.magnitude > 0.01f)//turns unit towards to the enemy unit
                         {
                             transform.LookAt(gameObject.transform.position + direction);
                         }
                         if (!isWalkingAnimPlaying.Value)//plays walking anim of unit
                         {
-                            isWalkingAnimPlaying.Value = true;
+                            UpdateVariables(inCombat.Value, isMoving.Value, isCollidedWithEnemy.Value, isRoundWon.Value, true, isAttackingAnimPlaying.Value, isNewRoundStarted.Value, isOnTheBench.Value, targetPosition.Value);
                             ChangeToMoveAnimation();
                         }
-                        PositionObject(gameObject.transform.position);
+                        //PositionObject(gameObject.transform.position);
                     }
                     else
                     {//if there is no target position, stops walking and walking animation
-                        isMoving.Value = false;
-                        isWalkingAnimPlaying.Value = false;
+                        UpdateVariables(inCombat.Value, false, isCollidedWithEnemy.Value, isRoundWon.Value, false, isAttackingAnimPlaying.Value, isNewRoundStarted.Value, isOnTheBench.Value, Vector3.one);
                     }
                 }
             }
@@ -200,13 +245,7 @@ public class UnitController : NetworkBehaviour
                 {
                     gameStateManager.isRoundStarted.Value = false;
                 }
-                inCombat.Value = false;
-                isMoving.Value = false;
-                isCollidedWithEnemy.Value = false;
-                isWalkingAnimPlaying.Value = false;
-                isAttackingAnimPlaying.Value = false;
-                isNewRoundStarted.Value = true;
-                isRoundWon.Value = false;
+                UpdateVariables(false, false, false, false, false, false, true, false, Vector3.one);
             }
         }
     }
@@ -305,6 +344,7 @@ public class UnitController : NetworkBehaviour
         {
             if (Camera.allCamerasCount > 1)
             {
+                UpdateVariables(false, false, isCollidedWithEnemy.Value, isRoundWon.Value, isWalkingAnimPlaying.Value, isAttackingAnimPlaying.Value, isNewRoundStarted.Value, isOnTheBench.Value, Vector3.one);
                 if (IsClient)
                 {
                     // Call the ClientRpc method to send the new position to the server
@@ -313,19 +353,15 @@ public class UnitController : NetworkBehaviour
                 //prevents players to access enemy units
                 if ((_camera.name.Contains("First")) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber.Value == 0))
                 {
-                    inCombat.Value = false;
-                    targetPosition = null;
-                    isMoving.Value = false;
-                    isWalkingAnimPlaying.Value = false;
+                    //targetPosition = null;
+                    //isWalkingAnimPlaying.Value = false;
                     gameObject.GetComponent<Collider>().isTrigger = true;
                     gameObject.transform.position = new Vector3(worldPosition.x, 0, worldPosition.z);
                 }
                 else if ((_camera.name.Contains("Second")) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber.Value == 1))
                 {
-                    inCombat.Value = false;
-                    targetPosition = null;
-                    isMoving.Value = false;
-                    isWalkingAnimPlaying.Value = false;
+                    //targetPosition = null;
+                    //isWalkingAnimPlaying.Value = false;
                     gameObject.GetComponent<Collider>().isTrigger = true;
                     gameObject.transform.position = new Vector3(worldPosition.x, 0, worldPosition.z);
                 }
@@ -335,10 +371,8 @@ public class UnitController : NetworkBehaviour
                 //prevents players to access enemy units
                 if ((Camera.main.name.Contains("Main")) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber.Value == 0))
                 {
-                    inCombat.Value = false;
-                    targetPosition = null;
-                    isMoving.Value = false;
-                    isWalkingAnimPlaying.Value = false;
+                    //targetPosition = null;
+                    //isWalkingAnimPlaying.Value = false;
                     gameObject.GetComponent<Collider>().isTrigger = true;
                     gameObject.transform.position = new Vector3(worldPosition.x, 0, worldPosition.z);
                 }
@@ -358,16 +392,18 @@ public class UnitController : NetworkBehaviour
                     FindLocation();
                     StartCoroutine(WaitForSecondsCoroutine(1f));
                     gameObject.GetComponent<Collider>().isTrigger = false;
-                    gameObject.GetComponent<InfoOfUnit>().UnitsPosition.Value = gameObject.transform.position;//saves units position and rotation before round starts. And returns it to there after round finishes.
-                    gameObject.GetComponent<InfoOfUnit>().UnitsRotation.Value = gameObject.transform.rotation;
+                    //gameObject.GetComponent<InfoOfUnit>().UnitsPosition.Value = gameObject.transform.position;//saves units position and rotation before round starts. And returns it to there after round finishes.
+                    //gameObject.GetComponent<InfoOfUnit>().UnitsRotation.Value = gameObject.transform.rotation;
+                    gameObject.GetComponent<InfoOfUnit>().UpdateVariablesInfo(gameObject.transform.position, gameObject.transform.rotation, gameObject.GetComponent<InfoOfUnit>().HealthValue.Value);
                 }
                 else if ((_camera.name.Contains("Second")) && (gameObject.GetComponent<InfoOfUnit>().TeamNumber.Value == 1))
                 {
                     FindLocation();
                     StartCoroutine(WaitForSecondsCoroutine(1f));
                     gameObject.GetComponent<Collider>().isTrigger = false;
-                    gameObject.GetComponent<InfoOfUnit>().UnitsPosition.Value = gameObject.transform.position;//saves units position and rotation before round starts. And returns it to there after round finishes.
-                    gameObject.GetComponent<InfoOfUnit>().UnitsRotation.Value = gameObject.transform.rotation;
+                    //gameObject.GetComponent<InfoOfUnit>().UnitsPosition.Value = gameObject.transform.position;//saves units position and rotation before round starts. And returns it to there after round finishes.
+                    //gameObject.GetComponent<InfoOfUnit>().UnitsRotation.Value = gameObject.transform.rotation;
+                    gameObject.GetComponent<InfoOfUnit>().UpdateVariablesInfo(gameObject.transform.position, gameObject.transform.rotation, gameObject.GetComponent<InfoOfUnit>().HealthValue.Value);
                 }
             }
             else
@@ -377,8 +413,9 @@ public class UnitController : NetworkBehaviour
                     FindLocation();
                     StartCoroutine(WaitForSecondsCoroutine(1f));
                     gameObject.GetComponent<Collider>().isTrigger = false;
-                    gameObject.GetComponent<InfoOfUnit>().UnitsPosition.Value = gameObject.transform.position;//saves units position and rotation before round starts. And returns it to there after round finishes.
-                    gameObject.GetComponent<InfoOfUnit>().UnitsRotation.Value = gameObject.transform.rotation;
+                    //gameObject.GetComponent<InfoOfUnit>().UnitsPosition.Value = gameObject.transform.position;//saves units position and rotation before round starts. And returns it to there after round finishes.
+                    //gameObject.GetComponent<InfoOfUnit>().UnitsRotation.Value = gameObject.transform.rotation;
+                    gameObject.GetComponent<InfoOfUnit>().UpdateVariablesInfo(gameObject.transform.position, gameObject.transform.rotation, gameObject.GetComponent<InfoOfUnit>().HealthValue.Value);
                 }
             }
         }
@@ -396,7 +433,7 @@ public class UnitController : NetworkBehaviour
             gameObject.transform.position = new Vector3(assignedLocation.x, gameObject.transform.position.y, assignedLocation.z);
             gameObject.transform.position = new Vector3(gameObject.transform.position.x, 0, gameObject.transform.position.z);
             benchComponent.isUnitOnBench = false;
-            isOnTheBench.Value = true;
+            UpdateVariables(inCombat.Value, isMoving.Value, isCollidedWithEnemy.Value, isRoundWon.Value, isWalkingAnimPlaying.Value, isAttackingAnimPlaying.Value, isNewRoundStarted.Value, true, Vector3.one);
             foreach (var item in grids)
             {
                 if (item.GetComponent<Grid>() != null && item.GetComponent<Grid>().isActiveAndEnabled)
@@ -415,7 +452,7 @@ public class UnitController : NetworkBehaviour
                     gameObject.transform.position = new Vector3(childGameObject.transform.position.x, gameObject.transform.position.y, childGameObject.transform.position.z);
                     gameObject.transform.position = new Vector3(gameObject.transform.position.x, 0, gameObject.transform.position.z);
                     isCursorOnBlock = true;
-                    isOnTheBench.Value = false;
+                    UpdateVariables(inCombat.Value, isMoving.Value, isCollidedWithEnemy.Value, isRoundWon.Value, isWalkingAnimPlaying.Value, isAttackingAnimPlaying.Value, isNewRoundStarted.Value, false, Vector3.one);
                     foreach (var item in grids)
                     {
                         if (item.GetComponent<Grid>() != null && item.GetComponent<Grid>().isActiveAndEnabled)
@@ -447,7 +484,7 @@ public class UnitController : NetworkBehaviour
             }
             gameObject.transform.position = new Vector3(nearestGameObject.transform.position.x, gameObject.transform.position.y, nearestGameObject.transform.position.z);
             gameObject.transform.position = new Vector3(gameObject.transform.position.x, 0, gameObject.transform.position.z);
-            isOnTheBench.Value = false;
+            UpdateVariables(inCombat.Value, isMoving.Value, isCollidedWithEnemy.Value, isRoundWon.Value, isWalkingAnimPlaying.Value, isAttackingAnimPlaying.Value, isNewRoundStarted.Value, false, Vector3.one);
             foreach (var item in grids)
             {
                 if (item.GetComponent<Grid>() != null && item.GetComponent<Grid>().isActiveAndEnabled)
@@ -466,9 +503,7 @@ public class UnitController : NetworkBehaviour
         {
             if (collision.gameObject.GetComponent<InfoOfUnit>().TeamNumber.Value != gameObject.GetComponent<InfoOfUnit>().TeamNumber.Value)//checks collision with enemy is started
             {
-                isCollidedWithEnemy.Value = true;
-                isMoving.Value = false;
-                isWalkingAnimPlaying.Value = false;
+                UpdateVariables(inCombat.Value, false, true, isRoundWon.Value, false, isAttackingAnimPlaying.Value, isNewRoundStarted.Value, isOnTheBench.Value, Vector3.one);
                 StartCoroutine(DamageEnemyUnit(collision.gameObject));
             }
             else
@@ -484,16 +519,14 @@ public class UnitController : NetworkBehaviour
         {
             if (collision.gameObject.GetComponent<InfoOfUnit>().TeamNumber.Value != gameObject.GetComponent<InfoOfUnit>().TeamNumber.Value)//checks collision with enemy is finished
             {
-                isCollidedWithEnemy.Value = false;
-                inCombat.Value = false;
-                isAttackingAnimPlaying.Value = false;
+                UpdateVariables(false, isMoving.Value, false, isRoundWon.Value, isWalkingAnimPlaying.Value, false, isNewRoundStarted.Value, isOnTheBench.Value, Vector3.one);
             }
         }
     }
 
     private void Combat()
     {
-        inCombat.Value = true;
+        UpdateVariables(true, isMoving.Value, isCollidedWithEnemy.Value, isRoundWon.Value, isWalkingAnimPlaying.Value, isAttackingAnimPlaying.Value, isNewRoundStarted.Value, isOnTheBench.Value, Vector3.one);
         float distance = -1;
         GameObject nearEnemyGameObject = null;
         foreach (var item in gridGameObject.GetComponent<Grid>().gameObjectsOnGrid)//checks every units in the grid to find nearest enemy
@@ -524,8 +557,8 @@ public class UnitController : NetworkBehaviour
 
     private void MoveToEnemy(GameObject enemyGameObject)//sets enemy position as target position
     {
-        targetPosition = enemyGameObject.transform;
-        isMoving.Value = true;
+        //targetPosition.Value = enemyGameObject.transform;
+        UpdateVariables(true, true, isCollidedWithEnemy.Value, isRoundWon.Value, isWalkingAnimPlaying.Value, isAttackingAnimPlaying.Value, isNewRoundStarted.Value, isOnTheBench.Value, enemyGameObject.transform.position);
     }
 
     private IEnumerator DamageEnemyUnit(GameObject enemyGameObject)
@@ -539,16 +572,14 @@ public class UnitController : NetworkBehaviour
                 //checks enemy is died to stop attacking
                 if (enemyGameObject == null || !enemyGameObject.activeInHierarchy)
                 {
-                    isCollidedWithEnemy.Value = false;
-                    inCombat.Value = false;
-                    isAttackingAnimPlaying.Value = false;
+                    UpdateVariables(false, isMoving.Value, false, isRoundWon.Value, isWalkingAnimPlaying.Value, false, isNewRoundStarted.Value, isOnTheBench.Value, Vector3.one);
                 }
                 else
                 {
                     enemyGameObject.GetComponent<InfoOfUnit>().HealthValue.Value -= gameObject.GetComponent<InfoOfUnit>().DamageValue.Value;//reduces enemy unit health
                     if (!isAttackingAnimPlaying.Value)//sets attacking anim
                     {
-                        isAttackingAnimPlaying.Value = true;
+                        UpdateVariables(inCombat.Value, isMoving.Value, isCollidedWithEnemy.Value, isRoundWon.Value, isWalkingAnimPlaying.Value, true, isNewRoundStarted.Value, isOnTheBench.Value, Vector3.one);
                         ChangeToAttackAnimation();
                     }
                 }
@@ -623,16 +654,34 @@ public class UnitController : NetworkBehaviour
         Positioner(position, serverRpcParams.Receive.SenderClientId);
     }
 
-    [ServerRpc]
-    public void UpdateNetworkVariables(bool comVal, bool movVal, bool colVal, bool wonVal, bool walkVal, bool attackVal, bool newRoundVal, bool onBenchVal)
+    private void UpdateVariables(bool comVal, bool movVal, bool colVal, bool wonVal, bool walkVal, bool attackVal, bool newRoundVal, bool onBenchVal, Vector3 _target)
     {
-        inCombat.Value = false;
-        isMoving.Value = false;
-        isCollidedWithEnemy.Value = false;
-        isRoundWon.Value = false;
-        isWalkingAnimPlaying.Value = false;
-        isAttackingAnimPlaying.Value = false;
-        isNewRoundStarted.Value = true;
-        isOnTheBench.Value = false;
+        if (NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsHost)
+        {
+            UpdateNetworkVariables(comVal, movVal, colVal, wonVal, walkVal, attackVal, newRoundVal, onBenchVal, _target);
+        }
+        else
+        {
+            UpdateNetworkVariablesServerRpc(comVal, movVal, colVal, wonVal, walkVal, attackVal, newRoundVal, onBenchVal, _target);
+        }
+    }
+
+    public void UpdateNetworkVariables(bool comVal, bool movVal, bool colVal, bool wonVal, bool walkVal, bool attackVal, bool newRoundVal, bool onBenchVal, Vector3 _target)
+    {
+        inCombat.Value = comVal;
+        isMoving.Value = movVal;
+        isCollidedWithEnemy.Value = colVal;
+        isRoundWon.Value = wonVal;
+        isWalkingAnimPlaying.Value = walkVal;
+        isAttackingAnimPlaying.Value = attackVal;
+        isNewRoundStarted.Value = newRoundVal;
+        isOnTheBench.Value = onBenchVal;
+        targetPosition.Value = _target;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void UpdateNetworkVariablesServerRpc(bool comVal, bool movVal, bool colVal, bool wonVal, bool walkVal, bool attackVal, bool newRoundVal, bool onBenchVal, Vector3 _target, ServerRpcParams serverRpcParams = default)
+    {
+        UpdateNetworkVariables(comVal, movVal, colVal, wonVal, walkVal, attackVal, newRoundVal, onBenchVal, _target);
     }
 }
