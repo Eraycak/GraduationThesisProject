@@ -882,8 +882,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59ab38522ba48b54ea5462c418c8b8c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inCombat:
+    m_InternalValue: 0
+  isMoving:
+    m_InternalValue: 0
   unitMoveSpeed: 2
-  isOnTheBench: 0
+  targetPosition: {fileID: 0}
+  isCollidedWithEnemy:
+    m_InternalValue: 0
+  isRoundWon:
+    m_InternalValue: 0
+  isWalkingAnimPlaying:
+    m_InternalValue: 0
+  isAttackingAnimPlaying:
+    m_InternalValue: 0
+  isNewRoundStarted:
+    m_InternalValue: 0
+  isOnTheBench:
+    m_InternalValue: 0
   attackSpeedTimer: 2
 --- !u!114 &603472060
 MonoBehaviour:
@@ -897,14 +913,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5afba503a3032164393d58e19a63dac6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nameOfUnit: FootmanPolyart
-  unitGameObject: {fileID: 1938597667469860090}
   animator: {fileID: 1938597667469860085}
-  teamNumber: 1
-  healthValue: 75
-  damageValue: 10
+  localAnimator: {fileID: 1938597667469860085}
+  TeamNumber:
+    m_InternalValue: 0
+  healthValue:
+    m_InternalValue: 75
+  localHealthValue: 75
+  damageValue:
+    m_InternalValue: 10
+  localDamageValue: 10
+  unitsPosition:
+    m_InternalValue: {x: 0, y: 0, z: 0}
+  unitsRotation:
+    m_InternalValue: {x: 0, y: 0, z: 0, w: 0}
   costOfUnit: 10
-  startHealthValue: 75
+  startHealthValue:
+    m_InternalValue: 75
 --- !u!136 &7874452372582335414
 CapsuleCollider:
   m_ObjectHideFlags: 0

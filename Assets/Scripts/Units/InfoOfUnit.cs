@@ -1,66 +1,48 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEditor;
 using UnityEngine;
 
-public class InfoOfUnit : MonoBehaviour
+public class InfoOfUnit : NetworkBehaviour
 {
-    [SerializeField] private string nameOfUnit;
-    [SerializeField] private GameObject unitGameObject;
-    [SerializeField] private Animator animator;
-    [SerializeField] private int teamNumber;
-    [SerializeField] private int healthValue;
-    [SerializeField] private int damageValue;
-    private Vector3 unitsPosition = Vector3.zero;
-    private Quaternion unitsRotation = Quaternion.identity;
-    [SerializeField] internal int costOfUnit = 5;
-    [SerializeField] private int startHealthValue;
+    [SerializeField] public Animator animator;
+    [SerializeField] private Animator localAnimator;
+    [SerializeField] public NetworkVariable<int> TeamNumber = new NetworkVariable<int>();
+    [SerializeField] public NetworkVariable<int> healthValue;
+    [SerializeField] private int localHealthValue;
+    [SerializeField] public NetworkVariable<int> damageValue;
+    [SerializeField] private int localDamageValue;
+    public NetworkVariable<Vector3> unitsPosition;
+    public NetworkVariable<Quaternion> unitsRotation;
+    [SerializeField] public int costOfUnit;
+    [SerializeField] public NetworkVariable<int> startHealthValue;
 
-    public string Name
-    {
-        get { return nameOfUnit; }
-        set { nameOfUnit = value; }
-    }
-    public GameObject UnitGameObject
-    {
-        get { return unitGameObject; }
-        set { unitGameObject = value; }
-    }
     public Animator Animator
     {
         get { return animator; }
         set { animator = value; }
     }
-    public int TeamNumber
-    {
-        get { return teamNumber; }
-        set { teamNumber = value; }
-    }
-    public int HealthValue
+
+    public NetworkVariable<int> HealthValue
     {
         get { return healthValue; }
-        set { 
-            healthValue = value;
-            if (healthValue <= 0)
-            {
-                StartCoroutine(DieAnimationCoroutine());
-            }
-        }
+        set {  healthValue.Value = value.Value; }
     }
-    public int DamageValue
+    public NetworkVariable<int> DamageValue
     {
         get { return damageValue; }
         set { damageValue = value; }
     }
 
-    public Vector3 UnitsPosition
+    public NetworkVariable<Vector3> UnitsPosition
     {
         get { return unitsPosition; }
         set { unitsPosition = value; }
     }
 
-    public Quaternion UnitsRotation
+    public NetworkVariable<Quaternion> UnitsRotation
     {
         get { return unitsRotation; }
         set { unitsRotation = value; }
@@ -73,8 +55,51 @@ public class InfoOfUnit : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    public int StartHealthValue
+    public NetworkVariable<int> StartHealthValue
     {
         get { return startHealthValue; }
+    }
+
+    private void SetTeamNumber(int _value, ulong clientId)
+    {
+        TeamNumber.Value = _value;
+    }
+
+    public void SetTeamNumberOfObject(int currentPlayerTeamNumber)
+    {
+        if (NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsHost)
+        {
+            SetTeamNumber(currentPlayerTeamNumber, NetworkManager.Singleton.LocalClientId);
+        }
+        else
+        {
+            SetOnServerRpc(currentPlayerTeamNumber);
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void SetOnServerRpc(int _currentPlayerTeamNumber, ServerRpcParams serverRpcParams = default)
+    {
+        SetTeamNumber(_currentPlayerTeamNumber, serverRpcParams.Receive.SenderClientId);
+    }
+
+    private void Start()
+    {
+        UnitsPosition.Value = Vector3.zero;
+        UnitsRotation.Value = Quaternion.identity;
+        costOfUnit = 5;
+        HealthValue.Value = localHealthValue;
+        startHealthValue.Value = localHealthValue;
+        DamageValue.Value = localDamageValue;
+        Animator = localAnimator;
+        HealthValue.OnValueChanged += OnHealthValueChanged;
+    }
+
+    private void OnHealthValueChanged(int oldValue, int newValue)
+    {
+        if (newValue <= 0)
+        {
+            StartCoroutine(DieAnimationCoroutine());
+        }
     }
 }

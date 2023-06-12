@@ -14,7 +14,7 @@ public class SliderPositionController : NetworkBehaviour
     {
         // Get the RectTransform component of the slider
         sliderRectTransform = healthSlider.GetComponent<RectTransform>();
-        healthSlider.maxValue = gameObject.GetComponent<InfoOfUnit>().StartHealthValue;
+        healthSlider.maxValue = gameObject.GetComponent<InfoOfUnit>().StartHealthValue.Value;
     }
 
     private void LateUpdate()
@@ -45,6 +45,6 @@ public class SliderPositionController : NetworkBehaviour
 
     public void UpdateHealthBarSlider()
     {
-        healthSlider.value = gameObject.GetComponent<InfoOfUnit>().HealthValue;
+        healthSlider.value = gameObject.GetComponent<InfoOfUnit>().HealthValue.Value;
     }
 }

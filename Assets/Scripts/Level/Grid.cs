@@ -20,7 +20,7 @@ public class Grid : NetworkBehaviour
         {
             if(obj.GetComponent<UnitController>() != null && obj.GetComponent<UnitController>().isActiveAndEnabled)
             {
-                if (obj.GetComponent<UnitController>().isOnTheBench)
+                if (obj.GetComponent<UnitController>().isOnTheBench.Value)
                 {
                     gameObjectsOnGrid[i] = null;
                 }

@@ -154,10 +154,10 @@ public class ShoppingManager : NetworkBehaviour
         unit = Instantiate(_spawnObject, _spawnLocation, Quaternion.Euler(_spawnRotation));
         NetworkObject networkObject = unit.GetComponent<NetworkObject>();
         networkObject.Spawn();
-        networkObject.ChangeOwnership(clientId);
-        unit.GetComponent<InfoOfUnit>().TeamNumber = _currentPlayerTeamNumber;
+        unit.GetComponent<InfoOfUnit>().SetTeamNumberOfObject(_currentPlayerTeamNumber);
         float realTimeSeconds = Time.realtimeSinceStartup;
         unit.name = unit.name + realTimeSeconds.ToString("0.0");
+        networkObject.ChangeOwnership(clientId);
         unit = null;
         spawnObjectName = null;
         spawnLocation = Vector3.zero;

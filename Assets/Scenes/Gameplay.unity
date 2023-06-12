@@ -13645,11 +13645,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aac32491d65cb4d42930719fbc0e10bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isRoundStarted: 0
-  canDoShopping: 0
+  gamePlaySceneName: GamePlay
+  gameIsStarted:
+    m_InternalValue: 0
+  shoppingTimer:
+    m_InternalValue: 0
+  isRoundStarted:
+    m_InternalValue: 0
+  canDoShopping:
+    m_InternalValue: 0
   shoppingTimerUIText: {fileID: 1951162869}
+  grids: []
+  isUnitsReturnedToPosition:
+    m_InternalValue: 0
   shopButton: {fileID: 385844258}
+  roundCounter:
+    m_InternalValue: 0
+  maxRoundNumber:
+    m_InternalValue: 0
   roundCounterUIText: {fileID: 2083335561}
+  doItOnce:
+    m_InternalValue: 0
   winCounterUIText: {fileID: 563490489}
 --- !u!4 &1967322123
 Transform:
